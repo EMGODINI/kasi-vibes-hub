@@ -8,6 +8,8 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Welcome from "./pages/Welcome";
 import Dashboard from "./pages/Dashboard";
+import Podcast from "./pages/Podcast";
+import PrivateRooms from "./pages/PrivateRooms";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
@@ -24,6 +26,8 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/welcome" element={<Welcome />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/podcast" element={<Podcast />} />
+          <Route path="/private-rooms" element={<PrivateRooms />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

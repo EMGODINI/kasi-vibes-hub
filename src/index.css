@@ -1,4 +1,6 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@400;700;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -105,7 +107,19 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-inter;
+  }
+
+  .font-inter {
+    font-family: 'Inter', sans-serif;
+  }
+
+  .font-montserrat {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .font-orbitron {
+    font-family: 'Orbitron', monospace;
   }
 }
 
@@ -143,6 +157,10 @@
     box-shadow: 
       inset 20px 20px 60px #d1d5db,
       inset -20px -20px 60px #ffffff;
+  }
+
+  .floating-icon {
+    animation: float 6s ease-in-out infinite alternate;
   }
 }
 
@@ -190,6 +208,15 @@
   }
 }
 
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(-15px);
+  }
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -208,6 +235,32 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--orange-600));
+}
+
+/* Audio Player Slider Styling */
+.slider {
+  -webkit-appearance: none;
+  background: #374151;
+  outline: none;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #ea580c;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #ea580c;
+  cursor: pointer;
+  border-radius: 50%;
+  border: none;
 }
 
 /* Smooth transitions for all interactive elements */
