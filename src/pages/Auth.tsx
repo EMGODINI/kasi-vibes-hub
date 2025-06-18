@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { Headphones, Mic, Vinyl, Square, Circle, Triangle, Eye, EyeOff } from 'lucide-react';
+import { Headphones, Mic, Disc3, Square, Circle, Triangle, Eye, EyeOff } from 'lucide-react';
 import PasswordStrengthIndicator from '@/components/PasswordStrengthIndicator';
 import FloatingIcons from '@/components/FloatingIcons';
 
