@@ -1,101 +1,191 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Music, Car, MessageCircle, Camera, Briefcase, Mic, Zap, Radio, Headphones } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
+import { Eye, EyeOff } from 'lucide-react';
+import FloatingIcons from '@/components/FloatingIcons';
+import PasswordStrengthIndicator from '@/components/PasswordStrengthIndicator';
 
 const Index = () => {
   const navigate = useNavigate();
-  const [isLoaded, setIsLoaded] = useState(false);
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  useEffect(() => {
-    setIsLoaded(true);
-  }, []);
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!username) newErrors.username = 'Username is required';
+    if (!email) newErrors.email = 'Email is required';
+    if (!password) newErrors.password = 'Password is required';
+    if (password !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
+    if (password.length < 6) newErrors.password = 'Password must be at least 6 characters';
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-  const features = [
-    { icon: Car, title: "Die Stance", desc: "Car lifestyle & culture" },
-    { icon: MessageCircle, title: "Umgosi", desc: "News & gossip feed" },
-    { icon: Camera, title: "Stoko", desc: "Photo uploads & stories" },
-    { icon: Briefcase, title: "Hustlers Nje", desc: "Business corner" },
-    { icon: Mic, title: "Styla Samahala", desc: "Music & freestyle" },
-    { icon: Zap, title: "Umdantso Kuphela", desc: "Dance battles" },
-    { icon: Headphones, title: "Siya Pheka", desc: "Podcasts & cooking" },
-    { icon: Radio, title: "Live Mix", desc: "DJ performances" }
-  ];
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+    
+    setIsLoading(true);
+    
+    // Simulate registration process - replace with actual Supabase auth
+    setTimeout(() => {
+      toast({
+        title: `Awe ${username}! 👊🏾`,
+        description: "Azi'She Khe - Welcome to the 3MGODINI family",
+      });
+      navigate('/welcome');
+      setIsLoading(false);
+    }, 1500);
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-orange-600/5"></div>
-        <div className="relative container mx-auto px-4 py-16">
-          <div className={`text-center transition-all duration-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            {/* Logo */}
-            <div className="mb-8">
-              <div className="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-br from-orange-500 to-orange-600 rounded-3xl shadow-2xl mb-6 hover:scale-105 transition-transform duration-300">
-                <span className="text-4xl font-bold text-white">3MG</span>
-              </div>
-              <h1 className="text-6xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent mb-4">
-                3MGodini
-              </h1>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Awe! Welcome to the ultimate kasi social hub. Share your stance, drop your beats, and connect with the culture.
-              </p>
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black relative overflow-hidden">
+      <FloatingIcons />
+      
+      <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
+        <div className="w-full max-w-md">
+          {/* Welcome Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-orange-600 to-orange-400 rounded-3xl shadow-2xl mb-6 animate-pulse">
+              <span className="text-3xl font-bold text-white font-orbitron">3MG</span>
             </div>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-              <Button 
-                size="lg" 
-                className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-                onClick={() => navigate('/auth')}
-              >
-                Get Started
-              </Button>
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="border-orange-500 text-orange-600 hover:bg-orange-50 font-semibold px-8 py-6 text-lg rounded-xl transition-all duration-300"
-                onClick={() => navigate('/dashboard')}
-              >
-                Explore Demo
-              </Button>
-            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent font-orbitron mb-4">
+              Welcome to 3MGODINI
+            </h1>
+            <p className="text-gray-300 text-lg font-inter mb-6">
+              Awe! Welcome to the ultimate kasi social hub. Share your stance, drop your beats, and connect with the culture.
+            </p>
           </div>
+
+          {/* Registration Card */}
+          <Card className="backdrop-blur-md bg-gray-900/70 border border-orange-500/30 shadow-2xl">
+            <CardHeader>
+              <CardTitle className="text-center text-white font-montserrat text-2xl">
+                Thatha Lento!
+              </CardTitle>
+              <CardDescription className="text-center text-gray-400 text-lg">
+                Join the movement and connect with your kasi
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleRegister} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="username" className="text-white">Username</Label>
+                  <Input 
+                    id="username" 
+                    type="text" 
+                    placeholder="Choose your kasi name"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                    className="bg-gray-800 border-orange-500/50 text-white placeholder:text-gray-400 focus:border-orange-500"
+                  />
+                  {errors.username && <p className="text-red-400 text-sm">{errors.username}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-white">Email</Label>
+                  <Input 
+                    id="email" 
+                    type="email" 
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="bg-gray-800 border-orange-500/50 text-white placeholder:text-gray-400 focus:border-orange-500"
+                  />
+                  {errors.email && <p className="text-red-400 text-sm">{errors.email}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-white">Password</Label>
+                  <div className="relative">
+                    <Input 
+                      id="password" 
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Create a strong password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="bg-gray-800 border-orange-500/50 text-white placeholder:text-gray-400 focus:border-orange-500 pr-10"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                  {errors.password && <p className="text-red-400 text-sm">{errors.password}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="confirm-password" className="text-white">Confirm Password</Label>
+                  <div className="relative">
+                    <Input 
+                      id="confirm-password" 
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirm your password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                      className="bg-gray-800 border-orange-500/50 text-white placeholder:text-gray-400 focus:border-orange-500 pr-10"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                  {errors.confirmPassword && <p className="text-red-400 text-sm">{errors.confirmPassword}</p>}
+                </div>
+                
+                <PasswordStrengthIndicator password={password} />
+                
+                <Button 
+                  type="submit" 
+                  className="w-full bg-gradient-to-r from-orange-600 to-orange-400 hover:from-orange-700 hover:to-orange-500 text-white font-semibold py-3 text-lg rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 hover:scale-105"
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Creating Account...' : 'Thatha Lento!'}
+                </Button>
+              </form>
+
+              <div className="text-center mt-6">
+                <p className="text-gray-400 mb-4">Already part of the family?</p>
+                <Button 
+                  variant="outline"
+                  onClick={() => navigate('/auth')}
+                  className="border-orange-500/50 text-orange-400 hover:bg-orange-500/10 hover:text-orange-300"
+                >
+                  Sign In Instead
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
-
-      {/* Features Grid */}
-      <div className="container mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-center mb-12">Discover Your Vibe</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {features.map((feature, index) => (
-            <Card 
-              key={feature.title}
-              className={`group hover:shadow-xl transition-all duration-500 cursor-pointer border-0 bg-gradient-to-br from-white/50 to-white/30 backdrop-blur-sm hover:scale-105 ${
-                isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-              }`}
-              style={{ transitionDelay: `${index * 100}ms` }}
-            >
-              <CardContent className="p-6 text-center">
-                <feature.icon className="w-8 h-8 mx-auto mb-3 text-orange-500 group-hover:text-orange-600 transition-colors" />
-                <h3 className="font-semibold text-sm mb-1">{feature.title}</h3>
-                <p className="text-xs text-muted-foreground">{feature.desc}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-
-      {/* Footer */}
-      <footer className="border-t bg-muted/30 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-8 text-center">
-          <p className="text-muted-foreground">
-            © 2024 3MGodini. Proudly South African. Made for the culture, by the culture.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 };
