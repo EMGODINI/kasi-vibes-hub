@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,14 +5,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
-import { Headphones, Mic, Disc3, Square, Circle, Triangle, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import PasswordStrengthIndicator from '@/components/PasswordStrengthIndicator';
 import FloatingIcons from '@/components/FloatingIcons';
+import WelcomeAudio from '@/components/WelcomeAudio';
+import { useAuth } from '@/hooks/useAuth';
 
 const Auth = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { signIn, signUp, user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -22,15 +22,23 @@ const Auth = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showWelcomeAudio, setShowWelcomeAudio] = useState(false);
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const validateForm = (isSignUp: boolean) => {
     const newErrors: Record<string, string> = {};
     
-    if (!email) newErrors.email = 'Email is required';
+    if (!email.trim()) newErrors.email = 'Email is required';
     if (!password) newErrors.password = 'Password is required';
     
     if (isSignUp) {
-      if (!username) newErrors.username = 'Username is required';
+      if (!username.trim()) newErrors.username = 'Username is required';
       if (password !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
       if (password.length < 6) newErrors.password = 'Password must be at least 6 characters';
     }
@@ -45,15 +53,16 @@ const Auth = () => {
     
     setIsLoading(true);
     
-    // Simulate login process - replace with actual Supabase auth
-    setTimeout(() => {
-      toast({
-        title: `Awe ${username || 'User'}! 👊🏾`,
-        description: "Azi'She Khe - Welcome back to 3MGODINI",
-      });
-      navigate('/dashboard');
+    try {
+      const { error } = await signIn(email, password);
+      if (!error) {
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -62,20 +71,25 @@ const Auth = () => {
     
     setIsLoading(true);
     
-    // Simulate registration process - replace with actual Supabase auth
-    setTimeout(() => {
-      toast({
-        title: `Awe ${username}! 👊🏾`,
-        description: "Azi'She Khe - Welcome to the 3MGODINI family",
-      });
-      navigate('/welcome');
+    try {
+      const { error } = await signUp(email, password, username);
+      if (!error) {
+        setShowWelcomeAudio(true);
+        setTimeout(() => {
+          navigate('/welcome');
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black relative overflow-hidden">
       <FloatingIcons />
+      <WelcomeAudio shouldPlay={showWelcomeAudio} onComplete={() => setShowWelcomeAudio(false)} />
       
       <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
         <div className="w-full max-w-md">

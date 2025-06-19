@@ -9,8 +9,9 @@ import { Badge } from '@/components/ui/badge';
 import { Upload, Music, Users, FileText, Settings, Play, Pause, Volume2 } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import { useToast } from '@/hooks/use-toast';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
-const Admin = () => {
+const AdminContent = () => {
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
   const [welcomeTrack, setWelcomeTrack] = useState('welcome-track.mp3');
@@ -105,7 +106,6 @@ const Admin = () => {
               </Card>
             </div>
 
-            {/* Recent Activity */}
             <Card className="bg-white/50 backdrop-blur-sm border-0">
               <CardHeader>
                 <CardTitle>Recent Platform Activity</CardTitle>
@@ -129,7 +129,6 @@ const Admin = () => {
             </Card>
           </TabsContent>
 
-          {/* Content Management Tab */}
           <TabsContent value="content" className="space-y-6">
             <Card className="bg-white/50 backdrop-blur-sm border-0">
               <CardHeader>
@@ -163,7 +162,6 @@ const Admin = () => {
             </Card>
           </TabsContent>
 
-          {/* Users Tab */}
           <TabsContent value="users" className="space-y-6">
             <Card className="bg-white/50 backdrop-blur-sm border-0">
               <CardHeader>
@@ -191,7 +189,6 @@ const Admin = () => {
             </Card>
           </TabsContent>
 
-          {/* Settings Tab */}
           <TabsContent value="settings" className="space-y-6">
             <Card className="bg-white/50 backdrop-blur-sm border-0">
               <CardHeader>
@@ -263,6 +260,14 @@ const Admin = () => {
         </Tabs>
       </div>
     </div>
+  );
+};
+
+const Admin = () => {
+  return (
+    <ProtectedRoute requireAdmin={true}>
+      <AdminContent />
+    </ProtectedRoute>
   );
 };
 

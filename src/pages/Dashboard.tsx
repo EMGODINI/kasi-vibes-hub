@@ -1,16 +1,17 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Car, MessageCircle, Camera, Briefcase, Mic, Zap, Headphones, Radio, Plus, Heart, MessageSquare, Share, MoreVertical, Play, Pause, Rewind, FastForward } from 'lucide-react';
+import { Car, MessageCircle, Camera, Briefcase, Mic, Zap, Headphones, Radio, Plus, Heart, MessageSquare, Share, MoreVertical, LogOut } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import AudioPlayer from '@/components/AudioPlayer';
+import { useAuth } from '@/hooks/useAuth';
 
 const Dashboard = () => {
-  const [username] = useState('User');
+  const { profile, signOut } = useAuth();
   const [isPlaying, setIsPlaying] = useState<number | null>(null);
   
   const tabs = [
@@ -148,14 +149,27 @@ const Dashboard = () => {
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-2xl font-bold text-white font-montserrat">Awe {username}! 👊🏾</h1>
+              <h1 className="text-2xl font-bold text-white font-montserrat">
+                Awe {profile?.username || 'User'}! 👊🏾
+              </h1>
               <p className="text-gray-400">Azi'She Khe - What's happening in your kasi today?</p>
             </div>
-            <Avatar className="w-12 h-12 ring-2 ring-orange-500/50">
-              <AvatarFallback className="bg-orange-100 text-orange-600">
-                {username[0]}
-              </AvatarFallback>
-            </Avatar>
+            <div className="flex items-center space-x-3">
+              <Avatar className="w-12 h-12 ring-2 ring-orange-500/50">
+                <AvatarImage src={profile?.avatar_url} />
+                <AvatarFallback className="bg-orange-100 text-orange-600">
+                  {profile?.username?.[0] || 'U'}
+                </AvatarFallback>
+              </Avatar>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={signOut}
+                className="text-gray-400 hover:text-orange-500"
+              >
+                <LogOut className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
           
           {/* Quick Post Button */}
