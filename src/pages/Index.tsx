@@ -53,17 +53,25 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-black relative overflow-hidden">
+      {/* Space-like background with stars */}
+      <div className="absolute inset-0 bg-[radial-gradient(white,rgba(255,255,255,.2)_1px,transparent_1px)] [background-size:50px_50px] opacity-20"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(white,rgba(255,255,255,.1)_1px,transparent_1px)] [background-size:100px_100px] opacity-30"></div>
+      
       <FloatingIcons />
       
       <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
         <div className="w-full max-w-md">
           {/* Welcome Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-orange-600 to-orange-400 rounded-3xl shadow-2xl mb-6 animate-pulse">
-              <span className="text-3xl font-bold text-white font-orbitron">3MG</span>
+            <div className="inline-flex items-center justify-center w-32 h-32 mb-6 animate-pulse">
+              <img 
+                src="/lovable-uploads/924af0ae-dd6b-494b-a23c-37583952b3e8.png" 
+                alt="3MGODINI Logo" 
+                className="w-full h-full object-contain drop-shadow-2xl"
+              />
             </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent font-orbitron mb-4">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 via-teal-400 to-orange-400 bg-clip-text text-transparent font-orbitron mb-4">
               Welcome to 3MGODINI
             </h1>
             <p className="text-gray-300 text-lg font-inter mb-6">
@@ -165,7 +173,7 @@ const Index = () => {
                 
                 <Button 
                   type="submit" 
-                  className="w-full bg-gradient-to-r from-orange-600 to-orange-400 hover:from-orange-700 hover:to-orange-500 text-white font-semibold py-3 text-lg rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 hover:scale-105"
+                  className="w-full bg-gradient-to-r from-orange-600 to-teal-400 hover:from-orange-700 hover:to-teal-500 text-white font-semibold py-3 text-lg rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 hover:scale-105"
                   disabled={isLoading}
                 >
                   {isLoading ? 'Creating Account...' : 'Thatha Lento!'}
