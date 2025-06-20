@@ -9,12 +9,13 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
-import { User, Mail, Camera } from 'lucide-react';
+import { User, Mail, Camera, Upload } from 'lucide-react';
 
 const Profile = () => {
   const { profile, refreshProfile } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [username, setUsername] = useState(profile?.username || '');
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
@@ -43,6 +44,51 @@ const Profile = () => {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !profile) return;
+
+    setIsUploadingAvatar(true);
+    try {
+      // Upload file to Supabase Storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${profile.id}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName);
+
+      // Update profile with avatar URL
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: data.publicUrl })
+        .eq('id', profile.id);
+
+      if (updateError) throw updateError;
+
+      await refreshProfile();
+      toast({
+        title: "Avatar updated",
+        description: "Your profile picture has been updated successfully.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Upload failed",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setIsUploadingAvatar(false);
     }
   };
 
@@ -79,14 +125,33 @@ const Profile = () => {
                     {profile.username?.[0]?.toUpperCase() || 'U'}
                   </AvatarFallback>
                 </Avatar>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="border-orange-500/50 text-orange-400 hover:bg-orange-500/10"
-                >
-                  <Camera className="w-4 h-4 mr-2" />
-                  Change Photo
-                </Button>
+                <div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarUpload}
+                    className="hidden"
+                    id="avatar-upload"
+                  />
+                  <Label htmlFor="avatar-upload">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-orange-500/50 text-orange-400 hover:bg-orange-500/10 cursor-pointer"
+                      disabled={isUploadingAvatar}
+                      asChild
+                    >
+                      <span>
+                        {isUploadingAvatar ? (
+                          <Upload className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          <Camera className="w-4 h-4 mr-2" />
+                        )}
+                        {isUploadingAvatar ? 'Uploading...' : 'Change Photo'}
+                      </span>
+                    </Button>
+                  </Label>
+                </div>
               </div>
 
               {/* Profile Form */}
@@ -118,7 +183,7 @@ const Profile = () => {
                     disabled
                     className="bg-gray-700 border-gray-600 text-gray-400 cursor-not-allowed"
                   />
-                  <p className="text-sm text-gray-500">Email cannot be changed</p>
+                  <p className="text-sm text-gray-500">Email cannot be changed here. Use Supabase Auth to update email.</p>
                 </div>
 
                 <Button

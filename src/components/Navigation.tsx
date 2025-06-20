@@ -2,11 +2,13 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Car, MessageCircle, Camera, Briefcase, Mic, Zap, Headphones, Radio, Home, User, Settings, Menu, X, Users } from 'lucide-react';
+import { Car, MessageCircle, Camera, Briefcase, Mic, Zap, Headphones, Radio, Home, User, Settings, Menu, X, Users, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 
 const Navigation = () => {
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const mainTabs = [
@@ -63,6 +65,17 @@ const Navigation = () => {
 
             {/* User Menu */}
             <div className="flex items-center space-x-2">
+              {isAdmin && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-orange-400 hover:text-orange-300 hover:bg-orange-500/10"
+                  onClick={() => navigate('/admin')}
+                >
+                  <Shield className="w-4 h-4 mr-1" />
+                  <span className="hidden sm:inline">Admin</span>
+                </Button>
+              )}
               <Button
                 variant="ghost"
                 size="sm"
@@ -109,6 +122,20 @@ const Navigation = () => {
                     {tab.label}
                   </Button>
                 ))}
+                {isAdmin && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="justify-start text-orange-400 hover:text-orange-300 hover:bg-orange-500/10"
+                    onClick={() => {
+                      navigate('/admin');
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    <Shield className="w-4 h-4 mr-2" />
+                    Admin Panel
+                  </Button>
+                )}
               </div>
             </div>
           )}
@@ -149,6 +176,17 @@ const Navigation = () => {
                 {tab.label}
               </Button>
             ))}
+            {isAdmin && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="whitespace-nowrap text-orange-400 hover:text-orange-300 hover:bg-orange-500/10"
+                onClick={() => navigate('/admin')}
+              >
+                <Shield className="w-4 h-4 mr-1" />
+                Admin Panel
+              </Button>
+            )}
           </div>
         </div>
       </div>
