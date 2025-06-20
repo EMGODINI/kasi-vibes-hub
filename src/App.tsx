@@ -13,6 +13,8 @@ import Dashboard from "./pages/Dashboard";
 import Podcast from "./pages/Podcast";
 import PrivateRooms from "./pages/PrivateRooms";
 import Admin from "./pages/Admin";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,7 +45,21 @@ const App = () => (
                 <PrivateRooms />
               </ProtectedRoute>
             } />
-            <Route path="/admin" element={<Admin />} />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            } />
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin" element={
+              <ProtectedRoute requireAdmin={true}>
+                <Admin />
+              </ProtectedRoute>
+            } />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
