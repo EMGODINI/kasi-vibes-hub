@@ -51,11 +51,31 @@ const Profile = () => {
     const file = e.target.files?.[0];
     if (!file || !profile) return;
 
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Invalid file type",
+        description: "Please select an image file.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please select a file smaller than 5MB.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsUploadingAvatar(true);
     try {
       // Upload file to Supabase Storage
       const fileExt = file.name.split('.').pop();
-      const fileName = `${profile.id}.${fileExt}`;
+      const fileName = `${profile.id}/${Date.now()}.${fileExt}`;
       
       const { error: uploadError } = await supabase.storage
         .from('avatars')
@@ -82,9 +102,10 @@ const Profile = () => {
         description: "Your profile picture has been updated successfully.",
       });
     } catch (error: any) {
+      console.error('Avatar upload error:', error);
       toast({
         title: "Upload failed",
-        description: error.message,
+        description: error.message || "Failed to upload avatar. Please try again.",
         variant: "destructive"
       });
     } finally {

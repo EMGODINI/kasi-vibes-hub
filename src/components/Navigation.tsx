@@ -69,11 +69,15 @@ const Navigation = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-orange-400 hover:text-orange-300 hover:bg-orange-500/10"
+                  className="text-orange-400 hover:text-orange-300 hover:bg-orange-500/10 border border-orange-500/30"
                   onClick={() => navigate('/admin')}
                 >
                   <Shield className="w-4 h-4 mr-1" />
-                  <span className="hidden sm:inline">Admin</span>
+                  <span className="hidden sm:inline">Admin Panel</span>
+                  <span className="sm:hidden">Admin</span>
+                  <Badge variant="secondary" className="ml-1 bg-orange-600 text-white text-xs">
+                    ADMIN
+                  </Badge>
                 </Button>
               )}
               <Button
@@ -126,7 +130,7 @@ const Navigation = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="justify-start text-orange-400 hover:text-orange-300 hover:bg-orange-500/10"
+                    className="justify-start text-orange-400 hover:text-orange-300 hover:bg-orange-500/10 col-span-2"
                     onClick={() => {
                       navigate('/admin');
                       setIsMenuOpen(false);
@@ -134,6 +138,9 @@ const Navigation = () => {
                   >
                     <Shield className="w-4 h-4 mr-2" />
                     Admin Panel
+                    <Badge variant="secondary" className="ml-2 bg-orange-600 text-white text-xs">
+                      ADMIN
+                    </Badge>
                   </Button>
                 )}
               </div>
@@ -180,11 +187,14 @@ const Navigation = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                className="whitespace-nowrap text-orange-400 hover:text-orange-300 hover:bg-orange-500/10"
+                className="whitespace-nowrap text-orange-400 hover:text-orange-300 hover:bg-orange-500/10 border border-orange-500/30"
                 onClick={() => navigate('/admin')}
               >
                 <Shield className="w-4 h-4 mr-1" />
                 Admin Panel
+                <Badge variant="secondary" className="ml-1 bg-orange-600 text-white text-xs">
+                  ADMIN
+                </Badge>
               </Button>
             )}
           </div>
