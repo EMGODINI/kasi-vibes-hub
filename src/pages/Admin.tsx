@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Upload, Music, Users, FileText, Settings, Play, Pause, Volume2 } from 'lucide-react';
 import Navigation from '@/components/Navigation';
+import ContentUpload from '@/components/ContentUpload';
 import { useToast } from '@/hooks/use-toast';
 import ProtectedRoute from '@/components/ProtectedRoute';
 
@@ -55,9 +55,10 @@ const AdminContent = () => {
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
+            <TabsTrigger value="upload">Upload</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
@@ -160,6 +161,11 @@ const AdminContent = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* New Upload Tab */}
+          <TabsContent value="upload" className="space-y-6">
+            <ContentUpload />
           </TabsContent>
 
           <TabsContent value="users" className="space-y-6">

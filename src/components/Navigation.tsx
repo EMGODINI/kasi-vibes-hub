@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Car, MessageCircle, Camera, Briefcase, Mic, Zap, Headphones, Radio, Home, User, Settings, Menu, X, Users, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const Navigation = () => {
   const navigate = useNavigate();
@@ -65,6 +66,7 @@ const Navigation = () => {
 
             {/* User Menu */}
             <div className="flex items-center space-x-2">
+              <ThemeToggle />
               {isAdmin && (
                 <Button
                   variant="ghost"
