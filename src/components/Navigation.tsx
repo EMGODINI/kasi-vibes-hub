@@ -16,7 +16,7 @@ const Navigation = () => {
     { id: 'home', label: 'Home', icon: Home, path: '/dashboard' },
     { id: 'siya-pheka', label: 'Siya Pheka', icon: Headphones, path: '/dashboard' },
     { id: 'podcast', label: 'Podcast', icon: Radio, path: '/podcast' },
-    { id: 'die-stance', label: 'Die Stance', icon: Car, path: '/dashboard' },
+    { id: 'die-stance', label: 'Die Stance', icon: Car, path: '/stance' },
     { id: 'private-rooms', label: 'Private Rooms', icon: Users, path: '/private-rooms' },
   ];
 

@@ -16,6 +16,7 @@ import PrivateRooms from "./pages/PrivateRooms";
 import Admin from "./pages/Admin";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
+import Stance from "./pages/Stance";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +41,11 @@ const App = () => (
               <Route path="/podcast" element={
                 <ProtectedRoute>
                   <Podcast />
+                </ProtectedRoute>
+              } />
+              <Route path="/stance" element={
+                <ProtectedRoute>
+                  <Stance />
                 </ProtectedRoute>
               } />
               <Route path="/private-rooms" element={
