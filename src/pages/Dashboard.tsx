@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -98,7 +97,7 @@ const Dashboard = () => {
           </Button>
         </div>
       </CardHeader>
-      <Car</Car>dContent className="pt-0">
+      <CardContent className="pt-0">
         <p className="mb-3 text-sm text-gray-300">{post.content}</p>
         
         {post.thumbnail && (
