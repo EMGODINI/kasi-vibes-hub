@@ -1,18 +1,23 @@
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { EnhancedButton } from '@/components/ui/enhanced-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { StaggeredList } from '@/components/ui/staggered-list';
 import { Car, MessageCircle, Camera, Briefcase, Mic, Zap, Headphones, Radio, Plus, Heart, MessageSquare, Share, MoreVertical, LogOut } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import AudioPlayer from '@/components/AudioPlayer';
+import DashboardSkeleton from '@/components/DashboardSkeleton';
 import { useAuth } from '@/hooks/useAuth';
+import { cn } from '@/lib/utils';
 
 const Dashboard = () => {
   const { profile, signOut } = useAuth();
   const [isPlaying, setIsPlaying] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   
   const tabs = [
     { id: 'siya-pheka', label: 'Siya Pheka', icon: Headphones },
@@ -25,7 +30,7 @@ const Dashboard = () => {
     { id: 'umdantso', label: 'Umdantso Kuphela', icon: Zap },
   ];
 
-  const mockPosts = [
+  const mockPosts = useMemo(() => [
     {
       id: 1,
       user: 'KingKasi',
@@ -61,14 +66,18 @@ const Dashboard = () => {
       category: 'die-stance',
       isPremium: false
     }
-  ];
+  ], []);
+
+  if (isLoading) {
+    return <DashboardSkeleton />;
+  }
 
   const PostCard = ({ post }: { post: any }) => (
-    <Card className="mb-6 hover:shadow-lg transition-all duration-300 border-0 bg-gray-900/50 backdrop-blur-sm border border-orange-500/20">
+    <Card className="mb-6 hover:shadow-lg transition-all duration-300 border-0 enhanced-glass border border-orange-500/20 transform hover:scale-[1.01] spring-bounce">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Avatar className="w-10 h-10 ring-2 ring-orange-500/50">
+            <Avatar className="w-10 h-10 ring-2 ring-orange-500/50 spring-bounce hover:ring-orange-400">
               <AvatarImage src={post.avatar} />
               <AvatarFallback className="bg-orange-100 text-orange-600">
                 {post.user[0]}
@@ -78,18 +87,18 @@ const Dashboard = () => {
               <div className="flex items-center space-x-2">
                 <p className="font-semibold text-sm text-white">{post.user}</p>
                 {post.isPremium && (
-                  <Badge className="bg-orange-600 text-white text-xs">Premium</Badge>
+                  <Badge className="bg-orange-600 text-white text-xs animate-pulse">Premium</Badge>
                 )}
               </div>
               <p className="text-xs text-gray-400">2h ago</p>
             </div>
           </div>
-          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white touch-target">
             <MoreVertical className="w-4 h-4" />
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="pt-0">
+      <Car</Car>dContent className="pt-0">
         <p className="mb-3 text-sm text-gray-300">{post.content}</p>
         
         {post.thumbnail && (
@@ -97,7 +106,7 @@ const Dashboard = () => {
             <img 
               src={post.thumbnail} 
               alt="Content thumbnail" 
-              className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
+              className="w-full h-48 object-cover hover:scale-105 transition-transform duration-500"
             />
           </div>
         )}
@@ -107,7 +116,7 @@ const Dashboard = () => {
             <img 
               src={post.image} 
               alt="Post content" 
-              className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
+              className="w-full h-48 object-cover hover:scale-105 transition-transform duration-500"
             />
           </div>
         )}
@@ -123,16 +132,16 @@ const Dashboard = () => {
         
         <div className="flex items-center justify-between pt-2 border-t border-gray-700">
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-orange-500">
+            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-orange-500 touch-target spring-bounce">
               <Heart className="w-4 h-4 mr-1" />
               {post.likes}
             </Button>
-            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-orange-500">
+            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-orange-500 touch-target spring-bounce">
               <MessageSquare className="w-4 h-4 mr-1" />
               {post.comments}
             </Button>
           </div>
-          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-orange-500">
+          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-orange-500 touch-target spring-bounce">
             <Share className="w-4 h-4" />
           </Button>
         </div>
@@ -146,7 +155,7 @@ const Dashboard = () => {
       
       <div className="container mx-auto px-4 py-6 pb-20">
         {/* Header */}
-        <div className="mb-6">
+        <div className="mb-6 animate-fade-in-up">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold text-white font-montserrat">
@@ -155,7 +164,7 @@ const Dashboard = () => {
               <p className="text-gray-400">Azi'She Khe - What's happening in your kasi today?</p>
             </div>
             <div className="flex items-center space-x-3">
-              <Avatar className="w-12 h-12 ring-2 ring-orange-500/50">
+              <Avatar className="w-12 h-12 ring-2 ring-orange-500/50 spring-bounce hover:ring-orange-400">
                 <AvatarImage src={profile?.avatar_url} />
                 <AvatarFallback className="bg-orange-100 text-orange-600">
                   {profile?.username?.[0] || 'U'}
@@ -165,7 +174,7 @@ const Dashboard = () => {
                 variant="ghost"
                 size="sm"
                 onClick={signOut}
-                className="text-gray-400 hover:text-orange-500"
+                className="text-gray-400 hover:text-orange-500 touch-target"
               >
                 <LogOut className="w-4 h-4" />
               </Button>
@@ -173,18 +182,22 @@ const Dashboard = () => {
           </div>
           
           {/* Quick Post Button */}
-          <Button className="w-full bg-gradient-to-r from-orange-600 to-orange-400 hover:from-orange-700 hover:to-orange-500 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 hover:scale-105">
+          <EnhancedButton 
+            variant="floating" 
+            className="w-full py-4 rounded-xl shadow-lg hover:shadow-orange-500/25"
+            animation="spring"
+          >
             <Plus className="w-4 h-4 mr-2" />
             Share your vibe
-          </Button>
+          </EnhancedButton>
         </div>
 
         {/* Content Tabs */}
         <Tabs defaultValue="all" className="w-full">
-          <TabsList className="w-full justify-start overflow-x-auto bg-gray-800/50 backdrop-blur-sm mb-6 border border-orange-500/30">
-            <TabsTrigger value="all" className="whitespace-nowrap text-white data-[state=active]:bg-orange-600">All Vibes</TabsTrigger>
+          <TabsList className="w-full justify-start overflow-x-auto enhanced-glass mb-6 border border-orange-500/30">
+            <TabsTrigger value="all" className="whitespace-nowrap text-white data-[state=active]:bg-orange-600 touch-target">All Vibes</TabsTrigger>
             {tabs.map((tab) => (
-              <TabsTrigger key={tab.id} value={tab.id} className="whitespace-nowrap text-white data-[state=active]:bg-orange-600">
+              <TabsTrigger key={tab.id} value={tab.id} className="whitespace-nowrap text-white data-[state=active]:bg-orange-600 touch-target">
                 <tab.icon className="w-4 h-4 mr-1" />
                 {tab.label}
               </TabsTrigger>
@@ -192,23 +205,25 @@ const Dashboard = () => {
           </TabsList>
 
           <TabsContent value="all" className="space-y-6">
-            {mockPosts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
+            <StaggeredList staggerDelay={150}>
+              {mockPosts.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+            </StaggeredList>
           </TabsContent>
 
           {tabs.map((tab) => (
             <TabsContent key={tab.id} value={tab.id} className="space-y-6">
-              <div className="text-center py-12">
-                <tab.icon className="w-12 h-12 mx-auto text-orange-500 mb-4" />
+              <div className="text-center py-12 animate-fade-in-up">
+                <tab.icon className="w-12 h-12 mx-auto text-orange-500 mb-4 animate-bounce-gentle" />
                 <h3 className="text-lg font-semibold mb-2 text-white">{tab.label}</h3>
                 <p className="text-gray-400 mb-4">
                   No content yet. Be the first to share in this category!
                 </p>
-                <Button className="bg-gradient-to-r from-orange-600 to-orange-400 hover:from-orange-700 hover:to-orange-500 hover:scale-105 transition-all duration-300">
+                <EnhancedButton variant="floating" animation="spring">
                   <Plus className="w-4 h-4 mr-2" />
                   Create Post
-                </Button>
+                </EnhancedButton>
               </div>
             </TabsContent>
           ))}
