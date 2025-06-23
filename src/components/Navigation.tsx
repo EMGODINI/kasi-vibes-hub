@@ -4,7 +4,6 @@ import DesktopNavigation from '@/components/navigation/DesktopNavigation';
 import UserMenu from '@/components/navigation/UserMenu';
 import MobileMenu from '@/components/navigation/MobileMenu';
 import BottomNavigation from '@/components/navigation/BottomNavigation';
-import SecondaryNavigation from '@/components/navigation/SecondaryNavigation';
 
 const Navigation = () => {
   return (
@@ -24,7 +23,6 @@ const Navigation = () => {
       </nav>
 
       <BottomNavigation />
-      <SecondaryNavigation />
     </>
   );
 };
