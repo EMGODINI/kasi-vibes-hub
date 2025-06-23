@@ -4,8 +4,9 @@ import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageSquare, Share } from 'lucide-react';
+import { Heart, MessageSquare, Share, Plus } from 'lucide-react';
 import Navigation from '@/components/Navigation';
+import PostCreationModal from '@/components/PostCreationModal';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -41,6 +42,7 @@ const DynamicPageContent = () => {
   const [page, setPage] = useState<AppPage | null>(null);
   const [posts, setPosts] = useState<PagePost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isPostModalOpen, setIsPostModalOpen] = useState(false);
 
   useEffect(() => {
     if (slug) {
@@ -50,6 +52,8 @@ const DynamicPageContent = () => {
 
   const fetchPageData = async () => {
     try {
+      console.log('Fetching page data for slug:', slug);
+      
       // Fetch page info
       const { data: pageData, error: pageError } = await supabase
         .from('app_pages')
@@ -58,7 +62,12 @@ const DynamicPageContent = () => {
         .eq('is_active', true)
         .single();
 
-      if (pageError) throw pageError;
+      if (pageError) {
+        console.error('Page error:', pageError);
+        throw pageError;
+      }
+      
+      console.log('Page data:', pageData);
       setPage(pageData);
 
       // Fetch posts for this page
@@ -68,7 +77,12 @@ const DynamicPageContent = () => {
         .eq('page_id', pageData.id)
         .order('created_at', { ascending: false });
 
-      if (postsError) throw postsError;
+      if (postsError) {
+        console.error('Posts error:', postsError);
+        throw postsError;
+      }
+      
+      console.log('Posts data:', postsData);
       setPosts(postsData || []);
 
     } catch (error) {
@@ -81,6 +95,10 @@ const DynamicPageContent = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handlePostCreated = () => {
+    fetchPageData(); // Refresh posts after creating a new one
   };
 
   if (isLoading) {
@@ -108,16 +126,29 @@ const DynamicPageContent = () => {
       <div className="container mx-auto px-4 py-6 pb-20">
         {/* Page Header */}
         <div className="mb-6">
-          <div className="flex items-center space-x-4 mb-4">
-            {page.icon_url && (
-              <img src={page.icon_url} alt={page.name} className="w-12 h-12 rounde " />
-            )}
-            <div>
-              <h1 className="text-3xl font-bold">{page.title}</h1>
-              {page.description && (
-                <p className="text-muted-foreground">{page.description}</p>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-4">
+              {page.icon_url && (
+                <img src={page.icon_url} alt={page.name} className="w-12 h-12 rounded-full" />
               )}
+              <div>
+                <h1 className="text-3xl font-bold">{page.title}</h1>
+                {page.description && (
+                  <p className="text-muted-foreground">{page.description}</p>
+                )}
+              </div>
             </div>
+            
+            {/* Create Post Button */}
+            {user && (
+              <Button
+                onClick={() => setIsPostModalOpen(true)}
+                className="bg-orange-600 hover:bg-orange-700 text-white"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Create Post
+              </Button>
+            )}
           </div>
           
           {page.thumbnail_url && (
@@ -137,6 +168,14 @@ const DynamicPageContent = () => {
             <Card>
               <CardContent className="py-12 text-center">
                 <p className="text-muted-foreground">No posts yet in this category.</p>
+                {user && (
+                  <Button
+                    onClick={() => setIsPostModalOpen(true)}
+                    className="mt-4 bg-orange-600 hover:bg-orange-700 text-white"
+                  >
+                    Be the first to post!
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ) : (
@@ -189,6 +228,16 @@ const DynamicPageContent = () => {
           )}
         </div>
       </div>
+
+      {/* Post Creation Modal */}
+      {page && (
+        <PostCreationModal
+          isOpen={isPostModalOpen}
+          onClose={() => setIsPostModalOpen(false)}
+          pageId={page.id}
+          onPostCreated={handlePostCreated}
+        />
+      )}
     </div>
   );
 };
