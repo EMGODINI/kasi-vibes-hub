@@ -17,6 +17,8 @@ import Admin from "./pages/Admin";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import Stance from "./pages/Stance";
+import Reels from "./pages/Reels";
+import DynamicPage from "./pages/DynamicPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,6 +50,11 @@ const App = () => (
                   <Stance />
                 </ProtectedRoute>
               } />
+              <Route path="/reels" element={
+                <ProtectedRoute>
+                  <Reels />
+                </ProtectedRoute>
+              } />
               <Route path="/private-rooms" element={
                 <ProtectedRoute>
                   <PrivateRooms />
@@ -66,6 +73,11 @@ const App = () => (
               <Route path="/admin" element={
                 <ProtectedRoute requireAdmin={true}>
                   <Admin />
+                </ProtectedRoute>
+              } />
+              <Route path="/page/:slug" element={
+                <ProtectedRoute>
+                  <DynamicPage />
                 </ProtectedRoute>
               } />
               <Route path="*" element={<NotFound />} />

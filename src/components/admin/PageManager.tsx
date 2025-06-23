@@ -52,6 +52,8 @@ const PageManager = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [uploadingIcon, setUploadingIcon] = useState(false);
   const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   // Form states
   const [pageForm, setPageForm] = useState({
@@ -80,18 +82,24 @@ const PageManager = () => {
 
   const fetchPages = async () => {
     try {
+      console.log('Fetching pages...');
       const { data, error } = await supabase
         .from('app_pages')
         .select('*')
         .order('order_index');
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching pages:', error);
+        throw error;
+      }
+      
+      console.log('Fetched pages:', data);
       setPages(data || []);
     } catch (error) {
       console.error('Error fetching pages:', error);
       toast({
         title: "Error",
-        description: "Failed to fetch pages",
+        description: "Failed to fetch pages. Please check console for details.",
         variant: "destructive"
       });
     } finally {
@@ -101,13 +109,19 @@ const PageManager = () => {
 
   const fetchPagePosts = async (pageId: string) => {
     try {
+      console.log('Fetching posts for page:', pageId);
       const { data, error } = await supabase
         .from('page_posts')
         .select('*')
         .eq('page_id', pageId)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching posts:', error);
+        throw error;
+      }
+      
+      console.log('Fetched posts:', data);
       setPosts(data || []);
     } catch (error) {
       console.error('Error fetching posts:', error);
@@ -120,6 +134,8 @@ const PageManager = () => {
   };
 
   const handleFileUpload = async (file: File, type: 'icon' | 'thumbnail', pageId: string) => {
+    console.log('Starting file upload:', { type, pageId, fileName: file.name });
+    
     if (type === 'icon') setUploadingIcon(true);
     else setUploadingThumbnail(true);
 
@@ -128,15 +144,21 @@ const PageManager = () => {
       const fileName = `${pageId}-${type}-${Date.now()}.${fileExt}`;
       const filePath = `${fileName}`;
 
+      console.log('Uploading file to storage:', filePath);
       const { error: uploadError } = await supabase.storage
         .from('page-assets')
         .upload(filePath, file);
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw uploadError;
+      }
 
       const { data: { publicUrl } } = supabase.storage
         .from('page-assets')
         .getPublicUrl(filePath);
+
+      console.log('File uploaded, updating database with URL:', publicUrl);
 
       const updateField = type === 'icon' ? 'icon_url' : 'thumbnail_url';
       const { error: updateError } = await supabase
@@ -144,7 +166,10 @@ const PageManager = () => {
         .update({ [updateField]: publicUrl })
         .eq('id', pageId);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error('Database update error:', updateError);
+        throw updateError;
+      }
 
       toast({
         title: "Success",
@@ -156,7 +181,7 @@ const PageManager = () => {
       console.error('Error uploading file:', error);
       toast({
         title: "Error",
-        description: `Failed to upload ${type}`,
+        description: `Failed to upload ${type}. Check console for details.`,
         variant: "destructive"
       });
     } finally {
@@ -166,16 +191,30 @@ const PageManager = () => {
   };
 
   const handleCreatePage = async () => {
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to create pages",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    console.log('Creating page:', pageForm);
+    
     try {
       const { error } = await supabase
         .from('app_pages')
         .insert({
           ...pageForm,
-          created_by: user?.id,
+          created_by: user.id,
           order_index: pages.length + 1
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error creating page:', error);
+        throw error;
+      }
 
       toast({
         title: "Success",
@@ -183,12 +222,13 @@ const PageManager = () => {
       });
 
       setPageForm({ name: '', title: '', description: '', slug: '' });
+      setCreateDialogOpen(false);
       fetchPages();
     } catch (error) {
       console.error('Error creating page:', error);
       toast({
         title: "Error",
-        description: "Failed to create page",
+        description: "Failed to create page. Check console for details.",
         variant: "destructive"
       });
     }
@@ -197,13 +237,18 @@ const PageManager = () => {
   const handleUpdatePage = async () => {
     if (!editingPage) return;
 
+    console.log('Updating page:', editingPage.id, pageForm);
+
     try {
       const { error } = await supabase
         .from('app_pages')
         .update(pageForm)
         .eq('id', editingPage.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating page:', error);
+        throw error;
+      }
 
       toast({
         title: "Success",
@@ -212,6 +257,7 @@ const PageManager = () => {
 
       setEditingPage(null);
       setPageForm({ name: '', title: '', description: '', slug: '' });
+      setEditDialogOpen(false);
       fetchPages();
     } catch (error) {
       console.error('Error updating page:', error);
@@ -224,13 +270,18 @@ const PageManager = () => {
   };
 
   const handleTogglePageStatus = async (pageId: string, isActive: boolean) => {
+    console.log('Toggling page status:', pageId, !isActive);
+    
     try {
       const { error } = await supabase
         .from('app_pages')
         .update({ is_active: !isActive })
         .eq('id', pageId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error toggling page status:', error);
+        throw error;
+      }
 
       toast({
         title: "Success",
@@ -249,13 +300,18 @@ const PageManager = () => {
   };
 
   const handleDeletePage = async (pageId: string) => {
+    console.log('Deleting page:', pageId);
+    
     try {
       const { error } = await supabase
         .from('app_pages')
         .delete()
         .eq('id', pageId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error deleting page:', error);
+        throw error;
+      }
 
       toast({
         title: "Success",
@@ -274,7 +330,16 @@ const PageManager = () => {
   };
 
   const handleCreatePost = async () => {
-    if (!selectedPage) return;
+    if (!selectedPage || !user) {
+      toast({
+        title: "Error",
+        description: "Please select a page and ensure you're logged in",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    console.log('Creating post:', postForm, 'for page:', selectedPage.id);
 
     try {
       const { error } = await supabase
@@ -282,10 +347,13 @@ const PageManager = () => {
         .insert({
           ...postForm,
           page_id: selectedPage.id,
-          created_by: user?.id
+          created_by: user.id
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error creating post:', error);
+        throw error;
+      }
 
       toast({
         title: "Success",
@@ -298,14 +366,14 @@ const PageManager = () => {
       console.error('Error creating post:', error);
       toast({
         title: "Error",
-        description: "Failed to create post",
+        description: "Failed to create post. Check console for details.",
         variant: "destructive"
       });
     }
   };
 
   if (isLoading) {
-    return <div className="p-6">Loading...</div>;
+    return <div className="p-6">Loading page management...</div>;
   }
 
   return (
@@ -316,7 +384,7 @@ const PageManager = () => {
           <p className="text-muted-foreground">Manage all pages, icons, thumbnails, and content</p>
         </div>
         
-        <Dialog>
+        <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button className="bg-orange-500 hover:bg-orange-600">
               <Plus className="w-4 h-4 mr-2" />
@@ -365,7 +433,7 @@ const PageManager = () => {
                   placeholder="Brief description of this page"
                 />
               </div>
-              <Button onClick={handleCreatePage} className="w-full">
+              <Button onClick={handleCreatePage} className="w-full" disabled={!pageForm.name || !pageForm.slug || !pageForm.title}>
                 Create Page
               </Button>
             </div>
@@ -375,7 +443,7 @@ const PageManager = () => {
 
       <Tabs defaultValue="pages" className="w-full">
         <TabsList>
-          <TabsTrigger value="pages">All Pages</TabsTrigger>
+          <TabsTrigger value="pages">All Pages ({pages.length})</TabsTrigger>
           <TabsTrigger value="content">Page Content</TabsTrigger>
         </TabsList>
 
@@ -386,149 +454,156 @@ const PageManager = () => {
               <CardDescription>Manage page settings, icons, and thumbnails</CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Icon</TableHead>
-                    <TableHead>Page</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Thumbnail</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {pages.map((page) => (
-                    <TableRow key={page.id}>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          <Avatar className="w-10 h-10">
-                            <AvatarImage src={page.icon_url} />
-                            <AvatarFallback>{page.name[0]}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <Input
-                              type="file"
-                              accept="image/*"
-                              className="hidden"
-                              id={`icon-${page.id}`}
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) handleFileUpload(file, 'icon', page.id);
-                              }}
-                            />
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => document.getElementById(`icon-${page.id}`)?.click()}
-                              disabled={uploadingIcon}
-                            >
-                              <Upload className="w-3 h-3 mr-1" />
-                              {uploadingIcon ? 'Uploading...' : 'Icon'}
-                            </Button>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{page.title}</div>
-                          <div className="text-sm text-muted-foreground">/{page.slug}</div>
-                          {page.description && (
-                            <div className="text-xs text-muted-foreground mt-1">{page.description}</div>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={page.is_active ? "default" : "secondary"}>
-                          {page.is_active ? 'Active' : 'Inactive'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          {page.thumbnail_url && (
-                            <img src={page.thumbnail_url} alt="Thumbnail" className="w-12 h-12 object-cover rounded" />
-                          )}
-                          <div>
-                            <Input
-                              type="file"
-                              accept="image/*"
-                              className="hidden"
-                              id={`thumb-${page.id}`}
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) handleFileUpload(file, 'thumbnail', page.id);
-                              }}
-                            />
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => document.getElementById(`thumb-${page.id}`)?.click()}
-                              disabled={uploadingThumbnail}
-                            >
-                              <Image className="w-3 h-3 mr-1" />
-                              {uploadingThumbnail ? 'Uploading...' : 'Thumbnail'}
-                            </Button>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setSelectedPage(page)}
-                          >
-                            <MessageSquare className="w-3 h-3 mr-1" />
-                            Posts
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setEditingPage(page);
-                              setPageForm({
-                                name: page.name,
-                                title: page.title,
-                                description: page.description || '',
-                                slug: page.slug
-                              });
-                            }}
-                          >
-                            <Edit className="w-3 h-3" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleTogglePageStatus(page.id, page.is_active)}
-                          >
-                            {page.is_active ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-                          </Button>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button variant="outline" size="sm">
-                                <Trash2 className="w-3 h-3" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Delete Page</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Are you sure you want to delete "{page.name}"? This action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => handleDeletePage(page.id)}>
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      </TableCell>
+              {pages.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">No pages found. Create your first page above.</p>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Icon</TableHead>
+                      <TableHead>Page</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Thumbnail</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {pages.map((page) => (
+                      <TableRow key={page.id}>
+                        <TableCell>
+                          <div className="flex items-center space-x-2">
+                            <Avatar className="w-10 h-10">
+                              <AvatarImage src={page.icon_url} />
+                              <AvatarFallback>{page.name[0]}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <Input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                id={`icon-${page.id}`}
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleFileUpload(file, 'icon', page.id);
+                                }}
+                              />
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => document.getElementById(`icon-${page.id}`)?.click()}
+                                disabled={uploadingIcon}
+                              >
+                                <Upload className="w-3 h-3 mr-1" />
+                                {uploadingIcon ? 'Uploading...' : 'Change Icon'}
+                              </Button>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">{page.title}</div>
+                            <div className="text-sm text-muted-foreground">/{page.slug}</div>
+                            {page.description && (
+                              <div className="text-xs text-muted-foreground mt-1">{page.description}</div>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={page.is_active ? "default" : "secondary"}>
+                            {page.is_active ? 'Active' : 'Inactive'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center space-x-2">
+                            {page.thumbnail_url && (
+                              <img src={page.thumbnail_url} alt="Thumbnail" className="w-12 h-12 object-cover rounded" />
+                            )}
+                            <div>
+                              <Input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                id={`thumb-${page.id}`}
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleFileUpload(file, 'thumbnail', page.id);
+                                }}
+                              />
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => document.getElementById(`thumb-${page.id}`)?.click()}
+                                disabled={uploadingThumbnail}
+                              >
+                                <Image className="w-3 h-3 mr-1" />
+                                {uploadingThumbnail ? 'Uploading...' : 'Set Thumbnail'}
+                              </Button>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center space-x-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setSelectedPage(page)}
+                            >
+                              <MessageSquare className="w-3 h-3 mr-1" />
+                              Posts
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setEditingPage(page);
+                                setPageForm({
+                                  name: page.name,
+                                  title: page.title,
+                                  description: page.description || '',
+                                  slug: page.slug
+                                });
+                                setEditDialogOpen(true);
+                              }}
+                            >
+                              <Edit className="w-3 h-3" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleTogglePageStatus(page.id, page.is_active)}
+                            >
+                              {page.is_active ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                            </Button>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button variant="outline" size="sm">
+                                  <Trash2 className="w-3 h-3" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Delete Page</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Are you sure you want to delete "{page.name}"? This action cannot be undone.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction onClick={() => handleDeletePage(page.id)}>
+                                    Delete
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -589,7 +664,7 @@ const PageManager = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Existing Posts</CardTitle>
+                  <CardTitle>Existing Posts ({posts.length})</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {posts.length === 0 ? (
@@ -630,7 +705,7 @@ const PageManager = () => {
       </Tabs>
 
       {/* Edit Page Dialog */}
-      <Dialog open={!!editingPage} onOpenChange={() => setEditingPage(null)}>
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Page</DialogTitle>
@@ -673,7 +748,7 @@ const PageManager = () => {
               <Button onClick={handleUpdatePage} className="flex-1">
                 Update Page
               </Button>
-              <Button variant="outline" onClick={() => setEditingPage(null)} className="flex-1">
+              <Button variant="outline" onClick={() => setEditDialogOpen(false)} className="flex-1">
                 Cancel
               </Button>
             </div>
