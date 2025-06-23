@@ -1,31 +1,58 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Menu, X, Car, MessageCircle, Camera, Briefcase, Mic, Zap, Headphones, Radio, Home, Users, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+
+interface AppPage {
+  id: string;
+  name: string;
+  slug: string;
+  title: string;
+  icon_url?: string;
+}
 
 const MobileMenu = () => {
   const navigate = useNavigate();
   const { isAdmin } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [pages, setPages] = useState<AppPage[]>([]);
 
-  const mainTabs = [
-    { id: 'home', label: 'Home', icon: Home, path: '/dashboard' },
-    { id: 'siya-pheka', label: 'Siya Pheka', icon: Headphones, path: '/dashboard' },
-    { id: 'podcast', label: 'Podcast', icon: Radio, path: '/podcast' },
-    { id: 'die-stance', label: 'Die Stance', icon: Car, path: '/stance' },
-    { id: 'private-rooms', label: 'Private Rooms', icon: Users, path: '/private-rooms' },
-  ];
+  useEffect(() => {
+    fetchPages();
+  }, []);
 
-  const secondaryTabs = [
-    { id: 'umgosi', label: 'Umgosi', icon: MessageCircle, path: '/dashboard' },
-    { id: 'stoko', label: 'Stoko', icon: Camera, path: '/dashboard' },
-    { id: 'hustlers', label: 'Hustlers Nje', icon: Briefcase, path: '/dashboard' },
-    { id: 'styla', label: 'Styla Samahala', icon: Mic, path: '/dashboard' },
-    { id: 'umdantso', label: 'Umdantso Kuphela', icon: Zap, path: '/dashboard' },
-  ];
+  const fetchPages = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('app_pages')
+        .select('*')
+        .eq('is_active', true)
+        .order('order_index', { ascending: true });
+
+      if (error) throw error;
+      setPages(data || []);
+    } catch (error) {
+      console.error('Error fetching pages:', error);
+    }
+  };
+
+  const getIcon = (pageName: string) => {
+    const name = pageName.toLowerCase();
+    if (name.includes('podcast')) return Radio;
+    if (name.includes('stance') || name.includes('car')) return Car;
+    if (name.includes('siya') || name.includes('music')) return Headphones;
+    if (name.includes('room') || name.includes('private')) return Users;
+    if (name.includes('umgosi') || name.includes('gossip')) return MessageCircle;
+    if (name.includes('stoko') || name.includes('photo')) return Camera;
+    if (name.includes('hustlers') || name.includes('business')) return Briefcase;
+    if (name.includes('styla') || name.includes('style')) return Mic;
+    if (name.includes('umdantso') || name.includes('dance')) return Zap;
+    return Home;
+  };
 
   return (
     <>
@@ -42,21 +69,38 @@ const MobileMenu = () => {
         <div className="lg:hidden absolute top-16 left-0 right-0 py-4 border-t border-orange-500/30 bg-gray-900/90 backdrop-blur-sm animate-fade-in z-50">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-2 gap-2">
-              {[...mainTabs, ...secondaryTabs].map((tab) => (
-                <Button
-                  key={tab.id}
-                  variant="ghost"
-                  size="sm"
-                  className="justify-start text-gray-300 hover:text-orange-400 hover:bg-orange-500/10"
-                  onClick={() => {
-                    navigate(tab.path);
-                    setIsMenuOpen(false);
-                  }}
-                >
-                  <tab.icon className="w-4 h-4 mr-2" />
-                  {tab.label}
-                </Button>
-              ))}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="justify-start text-gray-300 hover:text-orange-400 hover:bg-orange-500/10"
+                onClick={() => {
+                  navigate('/dashboard');
+                  setIsMenuOpen(false);
+                }}
+              >
+                <Home className="w-4 h-4 mr-2" />
+                Home
+              </Button>
+              
+              {pages.map((page) => {
+                const IconComponent = getIcon(page.name);
+                return (
+                  <Button
+                    key={page.id}
+                    variant="ghost"
+                    size="sm"
+                    className="justify-start text-gray-300 hover:text-orange-400 hover:bg-orange-500/10"
+                    onClick={() => {
+                      navigate(`/page/${page.slug}`);
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    <IconComponent className="w-4 h-4 mr-2" />
+                    {page.title}
+                  </Button>
+                );
+              })}
+              
               {isAdmin && (
                 <Button
                   variant="ghost"

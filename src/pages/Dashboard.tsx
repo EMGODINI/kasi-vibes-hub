@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { EnhancedButton } from '@/components/ui/enhanced-button';
@@ -11,139 +12,182 @@ import Navigation from '@/components/Navigation';
 import AudioPlayer from '@/components/AudioPlayer';
 import DashboardSkeleton from '@/components/DashboardSkeleton';
 import { useAuth } from '@/hooks/useAuth';
-import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
+
+interface AppPage {
+  id: string;
+  name: string;
+  slug: string;
+  title: string;
+  description?: string;
+  icon_url?: string;
+  thumbnail_url?: string;
+  is_active: boolean;
+}
+
+interface Post {
+  id: string;
+  title: string;
+  content?: string;
+  image_url?: string;
+  post_type: string;
+  is_featured: boolean;
+  likes_count: number;
+  comments_count: number;
+  created_at: string;
+  page_id: string;
+}
 
 const Dashboard = () => {
   const { profile, signOut } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
   const [isPlaying, setIsPlaying] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  
-  const tabs = [
-    { id: 'siya-pheka', label: 'Siya Pheka', icon: Headphones },
-    { id: 'podcast', label: 'Podcast', icon: Radio },
-    { id: 'die-stance', label: 'Die Stance', icon: Car },
-    { id: 'umgosi', label: 'Umgosi', icon: MessageCircle },
-    { id: 'stoko', label: 'Stoko', icon: Camera },
-    { id: 'hustlers', label: 'Hustlers Nje', icon: Briefcase },
-    { id: 'styla', label: 'Styla Samahala', icon: Mic },
-    { id: 'umdantso', label: 'Umdantso Kuphela', icon: Zap },
-  ];
+  const [isLoading, setIsLoading] = useState(true);
+  const [pages, setPages] = useState<AppPage[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
 
-  const mockPosts = useMemo(() => [
-    {
-      id: 1,
-      user: 'KingKasi',
-      avatar: '/placeholder.svg',
-      content: 'New beat dropped! Check this fire 🔥',
-      audioUrl: '/sample-beat.mp3',
-      thumbnail: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400',
-      likes: 24,
-      comments: 8,
-      category: 'siya-pheka',
-      isPremium: false
-    },
-    {
-      id: 2,
-      user: 'PodcastQueen',
-      avatar: '/placeholder.svg',
-      content: 'Latest episode of Kasi Stories - Real talk about township life',
-      audioUrl: '/sample-podcast.mp3',
-      thumbnail: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=400',
-      likes: 67,
-      comments: 23,
-      category: 'podcast',
-      isPremium: true
-    },
-    {
-      id: 3,
-      user: 'StanceKing',
-      avatar: '/placeholder.svg',
-      content: 'My new setup is looking clean! Rate the stance 1-10',
-      image: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=400',
-      likes: 156,
-      comments: 34,
-      category: 'die-stance',
-      isPremium: false
+  useEffect(() => {
+    fetchPagesAndPosts();
+  }, []);
+
+  const fetchPagesAndPosts = async () => {
+    try {
+      // Fetch active pages
+      const { data: pagesData, error: pagesError } = await supabase
+        .from('app_pages')
+        .select('*')
+        .eq('is_active', true)
+        .order('order_index', { ascending: true });
+
+      if (pagesError) throw pagesError;
+
+      // Fetch recent posts from all pages
+      const { data: postsData, error: postsError } = await supabase
+        .from('page_posts')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (postsError) throw postsError;
+
+      setPages(pagesData || []);
+      setPosts(postsData || []);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load content",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
     }
-  ], []);
+  };
 
   if (isLoading) {
     return <DashboardSkeleton />;
   }
 
-  const PostCard = ({ post }: { post: any }) => (
-    <Card className="mb-6 hover:shadow-lg transition-all duration-300 border-0 enhanced-glass border border-orange-500/20 transform hover:scale-[1.01] spring-bounce">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Avatar className="w-10 h-10 ring-2 ring-orange-500/50 spring-bounce hover:ring-orange-400">
-              <AvatarImage src={post.avatar} />
-              <AvatarFallback className="bg-orange-100 text-orange-600">
-                {post.user[0]}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <div className="flex items-center space-x-2">
-                <p className="font-semibold text-sm text-white">{post.user}</p>
-                {post.isPremium && (
-                  <Badge className="bg-orange-600 text-white text-xs animate-pulse">Premium</Badge>
-                )}
+  const PostCard = ({ post }: { post: Post }) => {
+    const page = pages.find(p => p.id === post.page_id);
+    
+    return (
+      <Card className="mb-6 hover:shadow-lg transition-all duration-300 border-0 enhanced-glass border border-orange-500/20 transform hover:scale-[1.01] spring-bounce">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Avatar className="w-10 h-10 ring-2 ring-orange-500/50 spring-bounce hover:ring-orange-400">
+                <AvatarImage src="/placeholder.svg" />
+                <AvatarFallback className="bg-orange-100 text-orange-600">
+                  {page?.name?.[0] || 'U'}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <p className="font-semibold text-sm text-white">{page?.name || 'Unknown'}</p>
+                  {post.is_featured && (
+                    <Badge className="bg-orange-600 text-white text-xs animate-pulse">Featured</Badge>
+                  )}
+                </div>
+                <p className="text-xs text-gray-400">
+                  {new Date(post.created_at).toLocaleDateString()}
+                </p>
               </div>
-              <p className="text-xs text-gray-400">2h ago</p>
             </div>
+            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white touch-target">
+              <MoreVertical className="w-4 h-4" />
+            </Button>
           </div>
-          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white touch-target">
-            <MoreVertical className="w-4 h-4" />
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <p className="mb-3 text-sm text-gray-300">{post.content}</p>
-        
-        {post.thumbnail && (
-          <div className="mb-3 rounded-lg overflow-hidden">
-            <img 
-              src={post.thumbnail} 
-              alt="Content thumbnail" 
-              className="w-full h-48 object-cover hover:scale-105 transition-transform duration-500"
-            />
+        </CardHeader>
+        <CardContent className="pt-0">
+          <h3 className="font-semibold text-white mb-2">{post.title}</h3>
+          {post.content && (
+            <p className="mb-3 text-sm text-gray-300">{post.content}</p>
+          )}
+          
+          {post.image_url && (
+            <div className="mb-3 rounded-lg overflow-hidden">
+              <img 
+                src={post.image_url} 
+                alt="Post content" 
+                className="w-full h-48 object-cover hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+          )}
+          
+          <div className="flex items-center justify-between pt-2 border-t border-gray-700">
+            <div className="flex items-center space-x-4">
+              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-orange-500 touch-target spring-bounce">
+                <Heart className="w-4 h-4 mr-1" />
+                {post.likes_count}
+              </Button>
+              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-orange-500 touch-target spring-bounce">
+                <MessageSquare className="w-4 h-4 mr-1" />
+                {post.comments_count}
+              </Button>
+            </div>
+            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-orange-500 touch-target spring-bounce">
+              <Share className="w-4 h-4" />
+            </Button>
           </div>
-        )}
-        
-        {post.image && (
-          <div className="mb-3 rounded-lg overflow-hidden">
-            <img 
-              src={post.image} 
-              alt="Post content" 
-              className="w-full h-48 object-cover hover:scale-105 transition-transform duration-500"
-            />
-          </div>
-        )}
+        </CardContent>
+      </Card>
+    );
+  };
 
-        {post.audioUrl && (
-          <AudioPlayer 
-            audioUrl={post.audioUrl}
-            title={post.content}
-            isPlaying={isPlaying === post.id}
-            onPlayPause={() => setIsPlaying(isPlaying === post.id ? null : post.id)}
-          />
-        )}
-        
-        <div className="flex items-center justify-between pt-2 border-t border-gray-700">
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-orange-500 touch-target spring-bounce">
-              <Heart className="w-4 h-4 mr-1" />
-              {post.likes}
-            </Button>
-            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-orange-500 touch-target spring-bounce">
-              <MessageSquare className="w-4 h-4 mr-1" />
-              {post.comments}
-            </Button>
+  const PageCard = ({ page }: { page: AppPage }) => (
+    <Card 
+      className="cursor-pointer hover:shadow-lg transition-all duration-300 border-0 enhanced-glass border border-orange-500/20 transform hover:scale-[1.02] spring-bounce"
+      onClick={() => navigate(`/page/${page.slug}`)}
+    >
+      <CardContent className="p-4">
+        <div className="flex items-center space-x-3">
+          {page.icon_url ? (
+            <img src={page.icon_url} alt={page.name} className="w-10 h-10 rounded-full object-cover" />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold">
+              {page.name[0]}
+            </div>
+          )}
+          <div className="flex-1">
+            <h3 className="font-semibold text-white">{page.title}</h3>
+            {page.description && (
+              <p className="text-sm text-gray-400">{page.description}</p>
+            )}
           </div>
-          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-orange-500 touch-target spring-bounce">
-            <Share className="w-4 h-4" />
-          </Button>
         </div>
+        {page.thumbnail_url && (
+          <div className="mt-3 rounded-lg overflow-hidden">
+            <img 
+              src={page.thumbnail_url} 
+              alt={page.name}
+              className="w-full h-24 object-cover"
+            />
+          </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -179,54 +223,37 @@ const Dashboard = () => {
               </Button>
             </div>
           </div>
-          
-          {/* Quick Post Button */}
-          <EnhancedButton 
-            variant="floating" 
-            className="w-full py-4 rounded-xl shadow-lg hover:shadow-orange-500/25"
-            animation="spring"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Share your vibe
-          </EnhancedButton>
         </div>
 
-        {/* Content Tabs */}
-        <Tabs defaultValue="all" className="w-full">
-          <TabsList className="w-full justify-start overflow-x-auto enhanced-glass mb-6 border border-orange-500/30">
-            <TabsTrigger value="all" className="whitespace-nowrap text-white data-[state=active]:bg-orange-600 touch-target">All Vibes</TabsTrigger>
-            {tabs.map((tab) => (
-              <TabsTrigger key={tab.id} value={tab.id} className="whitespace-nowrap text-white data-[state=active]:bg-orange-600 touch-target">
-                <tab.icon className="w-4 h-4 mr-1" />
-                {tab.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+        {/* Pages Grid */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold text-white mb-4">Explore Categories</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <StaggeredList staggerDelay={100}>
+              {pages.map((page) => (
+                <PageCard key={page.id} page={page} />
+              ))}
+            </StaggeredList>
+          </div>
+        </div>
 
-          <TabsContent value="all" className="space-y-6">
+        {/* Recent Posts */}
+        <div>
+          <h2 className="text-xl font-bold text-white mb-4">Latest Posts</h2>
+          {posts.length === 0 ? (
+            <Card className="bg-white/10 backdrop-blur-sm border-0">
+              <CardContent className="py-12 text-center">
+                <p className="text-gray-400">No posts yet. Be the first to share something!</p>
+              </CardContent>
+            </Card>
+          ) : (
             <StaggeredList staggerDelay={150}>
-              {mockPosts.map((post) => (
+              {posts.map((post) => (
                 <PostCard key={post.id} post={post} />
               ))}
             </StaggeredList>
-          </TabsContent>
-
-          {tabs.map((tab) => (
-            <TabsContent key={tab.id} value={tab.id} className="space-y-6">
-              <div className="text-center py-12 animate-fade-in-up">
-                <tab.icon className="w-12 h-12 mx-auto text-orange-500 mb-4 animate-bounce-gentle" />
-                <h3 className="text-lg font-semibold mb-2 text-white">{tab.label}</h3>
-                <p className="text-gray-400 mb-4">
-                  No content yet. Be the first to share in this category!
-                </p>
-                <EnhancedButton variant="floating" animation="spring">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Post
-                </EnhancedButton>
-              </div>
-            </TabsContent>
-          ))}
-        </Tabs>
+          )}
+        </div>
       </div>
     </div>
   );
