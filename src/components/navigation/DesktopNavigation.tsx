@@ -43,6 +43,7 @@ const DesktopNavigation = () => {
     if (name.includes('stance') || name.includes('car')) return Car;
     if (name.includes('siya') || name.includes('music')) return Headphones;
     if (name.includes('room') || name.includes('private')) return Users;
+    if (name.includes('azishe') || name.includes('ngama')) return Users;
     return Home;
   };
 
@@ -56,6 +57,17 @@ const DesktopNavigation = () => {
       >
         <Home className="w-4 h-4 mr-1" />
         Home
+      </Button>
+
+      {/* Special link for Azishe Ngama 2 */}
+      <Button
+        variant="ghost"
+        size="sm"
+        className="text-gray-300 hover:text-green-400 hover:bg-green-500/10"
+        onClick={() => navigate('/azishe-ngama-2')}
+      >
+        <Users className="w-4 h-4 mr-1" />
+        Azishe Ngama 2
       </Button>
       
       {pages.map((page) => {

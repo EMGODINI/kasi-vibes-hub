@@ -11,6 +11,9 @@ export type Database = {
     Tables: {
       app_pages: {
         Row: {
+          audio_title: string | null
+          audio_url: string | null
+          auto_play_audio: boolean | null
           created_at: string
           created_by: string | null
           description: string | null
@@ -25,6 +28,9 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          audio_title?: string | null
+          audio_url?: string | null
+          auto_play_audio?: boolean | null
           created_at?: string
           created_by?: string | null
           description?: string | null
@@ -39,6 +45,9 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          audio_title?: string | null
+          audio_url?: string | null
+          auto_play_audio?: boolean | null
           created_at?: string
           created_by?: string | null
           description?: string | null

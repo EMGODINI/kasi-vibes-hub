@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Edit, Trash2, Upload, Plus, Image, MessageSquare, Eye, EyeOff } from 'lucide-react';
+import { Edit, Trash2, Upload, Plus, Image, MessageSquare, Eye, EyeOff, Music } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
@@ -24,6 +23,9 @@ interface AppPage {
   description?: string;
   icon_url?: string;
   thumbnail_url?: string;
+  audio_url?: string;
+  audio_title?: string;
+  auto_play_audio: boolean;
   is_active: boolean;
   order_index: number;
   created_at: string;
@@ -52,6 +54,7 @@ const PageManager = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [uploadingIcon, setUploadingIcon] = useState(false);
   const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
+  const [uploadingAudio, setUploadingAudio] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
 
@@ -60,7 +63,9 @@ const PageManager = () => {
     name: '',
     title: '',
     description: '',
-    slug: ''
+    slug: '',
+    audio_title: '',
+    auto_play_audio: false
   });
 
   const [postForm, setPostForm] = useState({
@@ -190,6 +195,81 @@ const PageManager = () => {
     }
   };
 
+  const handleAudioUpload = async (file: File, pageId: string) => {
+    console.log('Starting audio upload:', { pageId, fileName: file.name });
+    
+    if (!file.type.startsWith('audio/')) {
+      toast({
+        title: "Invalid file type",
+        description: "Please select an audio file.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (file.size > 50 * 1024 * 1024) { // 50MB limit for audio
+      toast({
+        title: "File too large",
+        description: "Please select an audio file smaller than 50MB.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setUploadingAudio(true);
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `page-audio/${pageId}/${Date.now()}.${fileExt}`;
+
+      console.log('Uploading audio to storage:', fileName);
+      const { error: uploadError } = await supabase.storage
+        .from('page-assets')
+        .upload(fileName, file);
+
+      if (uploadError) {
+        console.error('Audio upload error:', uploadError);
+        throw uploadError;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('page-assets')
+        .getPublicUrl(fileName);
+
+      console.log('Audio uploaded, updating database with URL:', publicUrl);
+
+      const { error: updateError } = await supabase
+        .from('app_pages')
+        .update({ 
+          audio_url: publicUrl,
+          audio_title: file.name.replace(/\.[^/.]+$/, ""),
+          auto_play_audio: true
+        })
+        .eq('id', pageId);
+
+      if (updateError) {
+        console.error('Database update error:', updateError);
+        throw updateError;
+      }
+
+      toast({
+        title: "Success",
+        description: "Audio track updated successfully",
+      });
+
+      fetchPages();
+    } catch (error) {
+      console.error('Error uploading audio:', error);
+      toast({
+        title: "Error",
+        description: "Failed to upload audio. Check console for details.",
+        variant: "destructive"
+      });
+    } finally {
+      setUploadingAudio(false);
+    }
+  };
+
   const handleCreatePage = async () => {
     if (!user) {
       toast({
@@ -221,7 +301,14 @@ const PageManager = () => {
         description: "Page created successfully",
       });
 
-      setPageForm({ name: '', title: '', description: '', slug: '' });
+      setPageForm({ 
+        name: '', 
+        title: '', 
+        description: '', 
+        slug: '',
+        audio_title: '',
+        auto_play_audio: false
+      });
       setCreateDialogOpen(false);
       fetchPages();
     } catch (error) {
@@ -256,7 +343,14 @@ const PageManager = () => {
       });
 
       setEditingPage(null);
-      setPageForm({ name: '', title: '', description: '', slug: '' });
+      setPageForm({ 
+        name: '', 
+        title: '', 
+        description: '', 
+        slug: '',
+        audio_title: '',
+        auto_play_audio: false
+      });
       setEditDialogOpen(false);
       fetchPages();
     } catch (error) {
@@ -381,7 +475,7 @@ const PageManager = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Page Management</h2>
-          <p className="text-muted-foreground">Manage all pages, icons, thumbnails, and content</p>
+          <p className="text-muted-foreground">Manage all pages, icons, thumbnails, audio tracks, and content</p>
         </div>
         
         <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
@@ -433,6 +527,25 @@ const PageManager = () => {
                   placeholder="Brief description of this page"
                 />
               </div>
+              <div>
+                <Label htmlFor="audio-title">Audio Title (Optional)</Label>
+                <Input
+                  id="audio-title"
+                  value={pageForm.audio_title}
+                  onChange={(e) => setPageForm({ ...pageForm, audio_title: e.target.value })}
+                  placeholder="Enter audio track title"
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="auto-play"
+                  checked={pageForm.auto_play_audio}
+                  onChange={(e) => setPageForm({ ...pageForm, auto_play_audio: e.target.checked })}
+                  className="rounded border-orange-200"
+                />
+                <Label htmlFor="auto-play" className="text-sm">Auto-play audio when users enter page</Label>
+              </div>
               <Button onClick={handleCreatePage} className="w-full" disabled={!pageForm.name || !pageForm.slug || !pageForm.title}>
                 Create Page
               </Button>
@@ -451,7 +564,7 @@ const PageManager = () => {
           <Card>
             <CardHeader>
               <CardTitle>All Pages</CardTitle>
-              <CardDescription>Manage page settings, icons, and thumbnails</CardDescription>
+              <CardDescription>Manage page settings, icons, thumbnails, and audio tracks</CardDescription>
             </CardHeader>
             <CardContent>
               {pages.length === 0 ? (
@@ -466,6 +579,7 @@ const PageManager = () => {
                       <TableHead>Page</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Thumbnail</TableHead>
+                      <TableHead>Audio</TableHead>
                       <TableHead>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -545,6 +659,38 @@ const PageManager = () => {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
+                            {page.audio_url && (
+                              <div className="flex items-center space-x-2 text-xs text-green-600 bg-green-50 rounded px-2 py-1">
+                                <Music className="w-3 h-3" />
+                                <span>{page.audio_title || 'Audio Track'}</span>
+                              </div>
+                            )}
+                            <div>
+                              <Input
+                                type="file"
+                                accept="audio/*"
+                                className="hidden"
+                                id={`audio-${page.id}`}
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleAudioUpload(file, page.id);
+                                }}
+                              />
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => document.getElementById(`audio-${page.id}`)?.click()}
+                                disabled={uploadingAudio}
+                                title="Upload Audio Track"
+                              >
+                                <Music className="w-3 h-3 mr-1" />
+                                {uploadingAudio ? 'Uploading...' : 'Set Audio'}
+                              </Button>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center space-x-2">
                             <Button
                               variant="outline"
                               size="sm"
@@ -562,7 +708,9 @@ const PageManager = () => {
                                   name: page.name,
                                   title: page.title,
                                   description: page.description || '',
-                                  slug: page.slug
+                                  slug: page.slug,
+                                  audio_title: page.audio_title || '',
+                                  auto_play_audio: page.auto_play_audio
                                 });
                                 setEditDialogOpen(true);
                               }}
@@ -743,6 +891,24 @@ const PageManager = () => {
                 value={pageForm.description}
                 onChange={(e) => setPageForm({ ...pageForm, description: e.target.value })}
               />
+            </div>
+            <div>
+              <Label htmlFor="edit-audio-title">Audio Title</Label>
+              <Input
+                id="edit-audio-title"
+                value={pageForm.audio_title}
+                onChange={(e) => setPageForm({ ...pageForm, audio_title: e.target.value })}
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="edit-auto-play"
+                checked={pageForm.auto_play_audio}
+                onChange={(e) => setPageForm({ ...pageForm, auto_play_audio: e.target.checked })}
+                className="rounded border-orange-200"
+              />
+              <Label htmlFor="edit-auto-play" className="text-sm">Auto-play audio when users enter page</Label>
             </div>
             <div className="flex space-x-2">
               <Button onClick={handleUpdatePage} className="flex-1">
