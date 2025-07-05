@@ -32,8 +32,8 @@ const Welcome = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-orange-50/30 to-background flex items-center justify-center p-4">
-      <Card className="max-w-md w-full backdrop-blur-sm bg-white/70 border-0 shadow-2xl">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-orange-900/30 flex items-center justify-center p-4">
+      <Card className="max-w-md w-full backdrop-blur-xl bg-white/10 border border-white/20 shadow-2xl hover:shadow-orange-500/20 transition-all duration-500 enhanced-glass">
         <CardContent className="p-8 text-center">
           {/* Welcome Animation */}
           <div className="mb-8 animate-fade-in">
@@ -41,28 +41,28 @@ const Welcome = () => {
               <Hand className="w-12 h-12 text-white" />
             </div>
             
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">
               Awe {username}!
             </h1>
-            <p className="text-xl text-orange-600 font-semibold mb-4">
-              Azishe Khe 👊🏾
+            <p className="text-xl text-orange-400 font-semibold mb-4 drop-shadow-md">
+              Thatha Lento 👊🏾
             </p>
-            <p className="text-muted-foreground">
+            <p className="text-gray-300 drop-shadow-sm">
               Welcome to the 3MGodini family! Your vibe, your culture, your space.
             </p>
           </div>
 
           {/* Music Player Indicator */}
           {isPlaying && (
-            <div className="mb-6 p-4 bg-orange-100 rounded-lg animate-fade-in">
+            <div className="mb-6 p-4 bg-orange-500/20 backdrop-blur-sm rounded-lg animate-fade-in border border-orange-500/30">
               <div className="flex items-center justify-center space-x-2">
                 <div className="flex space-x-1">
-                  <div className="w-2 h-6 bg-orange-500 rounded animate-pulse"></div>
-                  <div className="w-2 h-4 bg-orange-500 rounded animate-pulse" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2 h-8 bg-orange-500 rounded animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                  <div className="w-2 h-3 bg-orange-500 rounded animate-pulse" style={{ animationDelay: '0.3s' }}></div>
+                  <div className="w-2 h-6 bg-orange-400 rounded animate-pulse"></div>
+                  <div className="w-2 h-4 bg-orange-400 rounded animate-pulse" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-2 h-8 bg-orange-400 rounded animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                  <div className="w-2 h-3 bg-orange-400 rounded animate-pulse" style={{ animationDelay: '0.3s' }}></div>
                 </div>
-                <span className="text-orange-700 font-medium">Playing welcome track...</span>
+                <span className="text-orange-200 font-medium">Playing welcome track...</span>
               </div>
             </div>
           )}
@@ -78,7 +78,7 @@ const Welcome = () => {
           {/* Skip Option */}
           <Button 
             variant="ghost" 
-            className="w-full mt-4 text-muted-foreground hover:text-orange-600"
+            className="w-full mt-4 text-gray-400 hover:text-orange-400 hover:bg-white/5"
             onClick={() => navigate('/dashboard')}
           >
             Skip for now
