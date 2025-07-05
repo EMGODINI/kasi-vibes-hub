@@ -9,8 +9,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { StaggeredList } from '@/components/ui/staggered-list';
 import { Car, MessageCircle, Camera, Briefcase, Mic, Zap, Headphones, Radio, Plus, Heart, MessageSquare, Share, MoreVertical, LogOut } from 'lucide-react';
 import Navigation from '@/components/Navigation';
-import AudioPlayer from '@/components/AudioPlayer';
 import DashboardSkeleton from '@/components/DashboardSkeleton';
+import TrendingSection from '@/components/TrendingSection';
+import ReelsGallery from '@/components/ReelsGallery';
+import CommunityFeed from '@/components/CommunityFeed';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -225,34 +227,50 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Pages Grid */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold text-white mb-4">Explore Categories</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <StaggeredList staggerDelay={100}>
-              {pages.map((page) => (
-                <PageCard key={page.id} page={page} />
-              ))}
-            </StaggeredList>
-          </div>
-        </div>
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Main Feed */}
+          <div className="lg:col-span-2">
+            {/* Pages Grid */}
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-white mb-4">Explore Categories</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <StaggeredList staggerDelay={100}>
+                  {pages.map((page) => (
+                    <PageCard key={page.id} page={page} />
+                  ))}
+                </StaggeredList>
+              </div>
+            </div>
 
-        {/* Recent Posts */}
-        <div>
-          <h2 className="text-xl font-bold text-white mb-4">Latest Posts</h2>
-          {posts.length === 0 ? (
-            <Card className="bg-white/10 backdrop-blur-sm border-0">
-              <CardContent className="py-12 text-center">
-                <p className="text-gray-400">No posts yet. Be the first to share something!</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <StaggeredList staggerDelay={150}>
-              {posts.map((post) => (
-                <PostCard key={post.id} post={post} />
-              ))}
-            </StaggeredList>
-          )}
+            {/* Community Feed */}
+            <div>
+              <h2 className="text-xl font-bold text-white mb-4 flex items-center space-x-2">
+                <span>Community Feed</span>
+                <Badge className="bg-green-600 text-white">Live</Badge>
+              </h2>
+              <CommunityFeed 
+                posts={posts} 
+                pages={pages} 
+                onPostUpdate={fetchPagesAndPosts}
+              />
+            </div>
+          </div>
+
+          {/* Right Column - Sidebar */}
+          <div className="space-y-6">
+            {/* Trending Section */}
+            <TrendingSection />
+            
+            {/* Reels Gallery */}
+            <div>
+              <h3 className="text-lg font-bold text-white mb-4 flex items-center space-x-2">
+                <span>Reels</span>
+                <Badge className="bg-purple-600 text-white">Hot</Badge>
+              </h3>
+              <ReelsGallery />
+            </div>
+          </div>
         </div>
       </div>
     </div>
