@@ -59,16 +59,6 @@ const DesktopNavigation = () => {
         Home
       </Button>
 
-      {/* Special link for Azishe Ngama 2 */}
-      <Button
-        variant="ghost"
-        size="sm"
-        className="text-gray-300 hover:text-green-400 hover:bg-green-500/10"
-        onClick={() => navigate('/azishe-ngama-2')}
-      >
-        <Users className="w-4 h-4 mr-1" />
-        Azishe Ngama 2
-      </Button>
       
       {pages.map((page) => {
         const IconComponent = getIcon(page.name);

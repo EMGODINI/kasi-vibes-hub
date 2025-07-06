@@ -18,7 +18,7 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import Stance from "./pages/Stance";
 import Reels from "./pages/Reels";
-import AzisheNgama from "./pages/AzisheNgama";
+
 import DynamicPage from "./pages/DynamicPage";
 import NotFound from "./pages/NotFound";
 
@@ -74,11 +74,6 @@ const App = () => (
               <Route path="/admin" element={
                 <ProtectedRoute requireAdmin={true}>
                   <Admin />
-                </ProtectedRoute>
-              } />
-              <Route path="/azishe-ngama-2" element={
-                <ProtectedRoute>
-                  <AzisheNgama />
                 </ProtectedRoute>
               } />
               <Route path="/page/:slug" element={
