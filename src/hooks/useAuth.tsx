@@ -11,11 +11,17 @@ interface Profile {
   avatar_url?: string;
 }
 
+interface Badge {
+  badge_type: 'admin' | 'verified';
+}
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   profile: Profile | null;
+  badges: Badge[];
   isAdmin: boolean;
+  isVerified: boolean;
   isLoading: boolean;
   signUp: (email: string, password: string, username: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
@@ -37,7 +43,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [badges, setBadges] = useState<Badge[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
@@ -58,8 +66,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (roleError) throw roleError;
 
+      // Fetch user badges
+      const { data: badgeData, error: badgeError } = await supabase
+        .from('user_badges')
+        .select('badge_type')
+        .eq('user_id', userId)
+        .eq('is_active', true);
+
+      if (badgeError) throw badgeError;
+
       setProfile(profileData);
-      setIsAdmin(roleData?.some(r => r.role === 'admin') || false);
+      setBadges(badgeData || []);
+      setIsAdmin(roleData?.some(r => r.role === 'admin') || badgeData?.some(b => b.badge_type === 'admin') || false);
+      setIsVerified(badgeData?.some(b => b.badge_type === 'verified' || b.badge_type === 'admin') || false);
     } catch (error) {
       console.error('Error fetching profile:', error);
       setProfile(null);
@@ -86,7 +105,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }, 0);
         } else {
           setProfile(null);
+          setBadges([]);
           setIsAdmin(false);
+          setIsVerified(false);
         }
         
         setIsLoading(false);
@@ -155,14 +176,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
     setSession(null);
     setProfile(null);
+    setBadges([]);
     setIsAdmin(false);
+    setIsVerified(false);
   };
 
   const value = {
     user,
     session,
     profile,
+    badges,
     isAdmin,
+    isVerified,
     isLoading,
     signUp,
     signIn,

@@ -5,47 +5,62 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Users, Clock, Plus, CreditCard } from 'lucide-react';
+import { Users, Clock, Plus, CreditCard, Lock } from 'lucide-react';
 import Navigation from '@/components/Navigation';
+import BadgeIcon from '@/components/BadgeIcon';
+import VerificationModal from '@/components/VerificationModal';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const PrivateRooms = () => {
-  const [userCredits] = useState(15);
+  const { user, isVerified } = useAuth();
+  const { toast } = useToast();
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [timeLeft, setTimeLeft] = useState<{ [key: number]: number }>({});
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [rooms, setRooms] = useState<any[]>([]);
+  const [timeLeft, setTimeLeft] = useState<{ [key: string]: number }>({});
+  const [loading, setLoading] = useState(true);
 
-  const mockRooms = [
-    {
-      id: 1,
-      name: 'Kasi Vibes Only',
-      creator: 'TownshipKing',
-      participants: 5,
-      maxParticipants: 8,
-      expiresAt: Date.now() + (24 * 60 * 60 * 1000), // 24 hours from now
-      isJoined: true
-    },
-    {
-      id: 2,
-      name: 'Beat Makers Circle',
-      creator: 'ProducerSA',
-      participants: 3,
-      maxParticipants: 6,
-      expiresAt: Date.now() + (36 * 60 * 60 * 1000), // 36 hours from now
-      isJoined: false
+  useEffect(() => {
+    fetchRooms();
+  }, [user]);
+
+  const fetchRooms = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('private_rooms')
+        .select(`
+          *,
+          profiles!private_rooms_host_id_fkey(username)
+        `)
+        .eq('is_active', true)
+        .gte('expires_at', new Date().toISOString())
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setRooms(data || []);
+    } catch (error) {
+      console.error('Error fetching rooms:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const newTimeLeft: { [key: number]: number } = {};
-      mockRooms.forEach(room => {
-        const remaining = Math.max(0, room.expiresAt - Date.now());
+      const newTimeLeft: { [key: string]: number } = {};
+      rooms.forEach(room => {
+        const remaining = Math.max(0, new Date(room.expires_at).getTime() - Date.now());
         newTimeLeft[room.id] = remaining;
       });
       setTimeLeft(newTimeLeft);
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [rooms]);
 
   const formatTimeLeft = (milliseconds: number) => {
     const hours = Math.floor(milliseconds / (1000 * 60 * 60));
@@ -53,17 +68,107 @@ const PrivateRooms = () => {
     return `${hours}h ${minutes}m`;
   };
 
-  const handleCreateRoom = (e: React.FormEvent) => {
+  const handleCreateRoom = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle room creation logic
-    console.log('Creating private room...');
-    setShowCreateForm(false);
+    if (!user || !isVerified) {
+      setShowVerificationModal(true);
+      return;
+    }
+
+    const formData = new FormData(e.target as HTMLFormElement);
+    const name = formData.get('roomName') as string;
+    const emoji = formData.get('emoji') as string || '🎧';
+    const maxParticipants = parseInt(formData.get('maxParticipants') as string) || 5;
+
+    try {
+      const { error } = await supabase
+        .from('private_rooms')
+        .insert({
+          name,
+          emoji,
+          host_id: user.id,
+          max_participants: maxParticipants,
+          participant_ids: [user.id]
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Room Created!",
+        description: "Your private room is now active",
+      });
+      
+      setShowCreateForm(false);
+      fetchRooms();
+    } catch (error) {
+      console.error('Error creating room:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create room",
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleJoinRoom = (roomId: number, cost: number) => {
-    if (userCredits >= cost) {
-      // Handle joining room logic
-      console.log(`Joining room ${roomId} for ${cost} credits`);
+  const handleJoinRoom = async (roomId: string) => {
+    if (!user || !isVerified) {
+      setShowVerificationModal(true);
+      return;
+    }
+
+    const room = rooms.find(r => r.id === roomId);
+    if (!room) return;
+
+    // Check if room is full
+    if (room.participant_ids?.length >= room.max_participants) {
+      // Initiate payment for room join
+      try {
+        const { data, error } = await supabase.functions.invoke('payment-handler', {
+          body: {
+            type: 'room_join',
+            userId: user.id,
+            phoneNumber: '+27123456789', // You'd get this from user input
+            roomId
+          }
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Payment Required",
+          description: "Room is full. Please confirm payment to join (R5)",
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to initiate payment",
+          variant: "destructive"
+        });
+      }
+    } else {
+      // Join room directly
+      try {
+        const updatedParticipants = [...(room.participant_ids || []), user.id];
+        const { error } = await supabase
+          .from('private_rooms')
+          .update({ participant_ids: updatedParticipants })
+          .eq('id', roomId);
+
+        if (error) throw error;
+
+        toast({
+          title: "Joined Room!",
+          description: "You've successfully joined the room",
+        });
+        
+        fetchRooms();
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to join room",
+          variant: "destructive"
+        });
+      }
     }
   };
 
@@ -71,7 +176,7 @@ const PrivateRooms = () => {
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black">
       <Navigation />
       
-      <div className="container mx-auto px-4 py-6 pb-20">
+        <div className="container mx-auto px-4 py-6 pb-20">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
@@ -80,25 +185,34 @@ const PrivateRooms = () => {
                 <Users className="w-8 h-8 mr-3 text-orange-500" />
                 Private Rooms
               </h1>
-              <p className="text-gray-400">Exclusive spaces for your crew</p>
+              <p className="text-gray-400">Exclusive spaces for verified users</p>
             </div>
-            <div className="text-right">
-              <p className="text-sm text-gray-400">Your Credits</p>
-              <Badge className="bg-orange-600 text-white text-lg px-3 py-1">
-                <CreditCard className="w-4 h-4 mr-1" />
-                {userCredits}
-              </Badge>
-            </div>
+            {user && (
+              <div className="flex items-center space-x-2">
+                <BadgeIcon userId={user.id} size="lg" />
+                {!isVerified && (
+                  <Button
+                    size="sm"
+                    onClick={() => setShowVerificationModal(true)}
+                    className="bg-orange-600 hover:bg-orange-700"
+                  >
+                    Get Verified
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Create Room Button */}
           {!showCreateForm ? (
             <Button 
-              onClick={() => setShowCreateForm(true)}
-              className="w-full bg-gradient-to-r from-orange-600 to-orange-400 hover:from-orange-700 hover:to-orange-500 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 hover:scale-105"
+              onClick={() => isVerified ? setShowCreateForm(true) : setShowVerificationModal(true)}
+              className="w-full bg-gradient-to-r from-orange-600 to-orange-400 hover:from-orange-700 hover:to-orange-500 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 hover:scale-105 disabled:opacity-50"
+              disabled={!user}
             >
+              {!isVerified && <Lock className="w-4 h-4 mr-2" />}
               <Plus className="w-4 h-4 mr-2" />
-              Create Private Room (5 Credits)
+              {isVerified ? 'Create Private Room' : 'Get Verified to Create Room'}
             </Button>
           ) : (
             <Card className="bg-gray-900/50 border border-orange-500/30 backdrop-blur-sm">
@@ -111,19 +225,32 @@ const PrivateRooms = () => {
                     <Label htmlFor="roomName" className="text-white">Room Name</Label>
                     <Input 
                       id="roomName"
+                      name="roomName"
                       placeholder="Enter room name"
                       className="bg-gray-800 border-orange-500/50 text-white"
                       required
                     />
                   </div>
                   <div>
+                    <Label htmlFor="emoji" className="text-white">Room Emoji</Label>
+                    <Input 
+                      id="emoji"
+                      name="emoji"
+                      placeholder="🎧"
+                      defaultValue="🎧"
+                      className="bg-gray-800 border-orange-500/50 text-white"
+                      maxLength={2}
+                    />
+                  </div>
+                  <div>
                     <Label htmlFor="maxParticipants" className="text-white">Max Participants</Label>
                     <Input 
                       id="maxParticipants"
+                      name="maxParticipants"
                       type="number"
                       min="2"
-                      max="20"
-                      defaultValue="8"
+                      max="5"
+                      defaultValue="5"
                       className="bg-gray-800 border-orange-500/50 text-white"
                       required
                     />
@@ -141,7 +268,7 @@ const PrivateRooms = () => {
                     <Button 
                       type="submit"
                       className="bg-orange-600 hover:bg-orange-700"
-                      disabled={userCredits < 5}
+                      disabled={!isVerified}
                     >
                       Create Room
                     </Button>
@@ -164,13 +291,35 @@ const PrivateRooms = () => {
         <div className="space-y-6">
           <h2 className="text-xl font-semibold text-white mb-4">Active Rooms</h2>
           
-          {mockRooms.map((room) => (
+          {loading ? (
+            <p className="text-gray-400">Loading rooms...</p>
+          ) : rooms.length === 0 ? (
+            <Card className="bg-gray-900/50 border border-orange-500/20">
+              <CardContent className="p-8 text-center">
+                <p className="text-gray-400 mb-4">No active rooms yet</p>
+                {isVerified && (
+                  <Button
+                    onClick={() => setShowCreateForm(true)}
+                    className="bg-orange-600 hover:bg-orange-700"
+                  >
+                    Create the First Room
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          ) : (
+            rooms.map((room) => (
             <Card key={room.id} className="bg-gray-900/50 border border-orange-500/20 backdrop-blur-sm hover:shadow-lg hover:shadow-orange-500/10 transition-all duration-300">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-1">{room.name}</h3>
-                    <p className="text-gray-400 text-sm">Created by {room.creator}</p>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-2xl">{room.emoji}</span>
+                    <div>
+                      <h3 className="text-lg font-semibold text-white mb-1">{room.name}</h3>
+                      <p className="text-gray-400 text-sm">
+                        Created by {room.profiles?.username || 'Unknown'}
+                      </p>
+                    </div>
                   </div>
                   <div className="text-right">
                     <Badge variant="outline" className="border-orange-500 text-orange-400 mb-2">
@@ -184,21 +333,30 @@ const PrivateRooms = () => {
                   <div className="flex items-center space-x-4 text-sm text-gray-400">
                     <span>
                       <Users className="w-4 h-4 inline mr-1" />
-                      {room.participants}/{room.maxParticipants}
+                      {room.participant_ids?.length || 0}/{room.max_participants}
                     </span>
                   </div>
                   
-                  {room.isJoined ? (
+                  {user && room.participant_ids?.includes(user.id) ? (
                     <Button className="bg-green-600 hover:bg-green-700">
                       Enter Room
                     </Button>
                   ) : (
                     <Button 
-                      onClick={() => handleJoinRoom(room.id, 3)}
+                      onClick={() => handleJoinRoom(room.id)}
                       className="bg-orange-600 hover:bg-orange-700"
-                      disabled={userCredits < 3}
+                      disabled={!isVerified}
                     >
-                      Join (3 Credits)
+                      {!isVerified ? (
+                        <>
+                          <Lock className="w-4 h-4 mr-1" />
+                          Get Verified
+                        </>
+                      ) : room.participant_ids?.length >= room.max_participants ? (
+                        'Join (R5)'
+                      ) : (
+                        'Join Free'
+                      )}
                     </Button>
                   )}
                 </div>
@@ -210,22 +368,14 @@ const PrivateRooms = () => {
                 )}
               </CardContent>
             </Card>
-          ))}
+            ))
+          )}
         </div>
 
-        {/* Buy Credits Section */}
-        <Card className="mt-8 bg-gradient-to-r from-orange-600/20 to-orange-400/20 border border-orange-500/30">
-          <CardContent className="p-6">
-            <div className="text-center">
-              <h3 className="text-xl font-semibold text-white mb-2">Need More Credits?</h3>
-              <p className="text-gray-400 mb-4">Top up with airtime to access premium features</p>
-              <Button className="bg-orange-600 hover:bg-orange-700">
-                <CreditCard className="w-4 h-4 mr-2" />
-                Buy Credits with Airtime
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <VerificationModal
+          isOpen={showVerificationModal}
+          onClose={() => setShowVerificationModal(false)}
+        />
       </div>
     </div>
   );
