@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Heart, MessageSquare, Share, MoreVertical, Send, Bookmark, Eye } from 'lucide-react';
+import { MoreVertical, Send, Bookmark, Eye, MessageSquare } from 'lucide-react';
+import SocialActions from '@/components/SocialActions';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -19,8 +20,10 @@ interface Post {
   is_featured: boolean;
   likes_count: number;
   comments_count: number;
+  shared_count: number;
   created_at: string;
   page_id: string;
+  created_by?: string;
 }
 
 interface Comment {
@@ -255,36 +258,23 @@ const CommunityFeed = ({ posts, pages, onPostUpdate }: CommunityFeedProps) => {
             </div>
           )}
           
-          {/* Engagement Stats */}
-          <div className="flex items-center justify-between pt-2 border-t border-gray-700">
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleLike(post.id)}
-                className={`${isLiked ? 'text-red-500' : 'text-gray-400'} hover:text-red-500 touch-target spring-bounce`}
-              >
-                <Heart className={`w-4 h-4 mr-1 ${isLiked ? 'fill-current' : ''}`} />
-                {post.likes_count + (isLiked ? 1 : 0)}
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => toggleComments(post.id)}
-                className="text-gray-400 hover:text-orange-500 touch-target spring-bounce"
-              >
-                <MessageSquare className="w-4 h-4 mr-1" />
-                {post.comments_count}
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-gray-400 hover:text-blue-500 touch-target spring-bounce"
-              >
-                <Share className="w-4 h-4 mr-1" />
-                Share
-              </Button>
-            </div>
+          {/* Social Actions */}
+          <SocialActions
+            postId={post.id}
+            likesCount={post.likes_count}
+            commentsCount={post.comments_count}
+            sharedCount={post.shared_count || 0}
+            authorId={post.created_by}
+            onLikeUpdate={(newCount) => {
+              if (onPostUpdate) onPostUpdate();
+            }}
+            onShareUpdate={(newCount) => {
+              if (onPostUpdate) onPostUpdate();
+            }}
+          />
+
+          {/* View Stats */}
+          <div className="flex justify-end mt-2">
             <div className="flex items-center space-x-1 text-xs text-gray-500">
               <Eye className="w-3 h-3" />
               <span>{post.likes_count + post.comments_count * 3}</span>

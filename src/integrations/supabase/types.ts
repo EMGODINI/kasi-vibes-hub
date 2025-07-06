@@ -108,11 +108,14 @@ export type Database = {
           id: string
           image_url: string | null
           is_featured: boolean | null
+          is_shared: boolean | null
           likes_count: number | null
           page_id: string | null
           post_type: string | null
+          shared_count: number | null
           title: string
           updated_at: string
+          user_likes: string[] | null
         }
         Insert: {
           comments_count?: number | null
@@ -122,11 +125,14 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_featured?: boolean | null
+          is_shared?: boolean | null
           likes_count?: number | null
           page_id?: string | null
           post_type?: string | null
+          shared_count?: number | null
           title: string
           updated_at?: string
+          user_likes?: string[] | null
         }
         Update: {
           comments_count?: number | null
@@ -136,11 +142,14 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_featured?: boolean | null
+          is_shared?: boolean | null
           likes_count?: number | null
           page_id?: string | null
           post_type?: string | null
+          shared_count?: number | null
           title?: string
           updated_at?: string
+          user_likes?: string[] | null
         }
         Relationships: [
           {
@@ -202,6 +211,27 @@ export type Database = {
           },
         ]
       }
+      post_likes: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -226,6 +256,27 @@ export type Database = {
           id?: string
           updated_at?: string
           username?: string
+        }
+        Relationships: []
+      }
+      user_follows: {
+        Row: {
+          created_at: string
+          followed_id: string
+          follower_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          followed_id: string
+          follower_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          followed_id?: string
+          follower_id?: string
+          id?: string
         }
         Relationships: []
       }

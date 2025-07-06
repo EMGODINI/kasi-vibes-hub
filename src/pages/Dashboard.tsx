@@ -38,8 +38,10 @@ interface Post {
   is_featured: boolean;
   likes_count: number;
   comments_count: number;
+  shared_count: number;
   created_at: string;
   page_id: string;
+  created_by?: string;
 }
 
 const Dashboard = () => {

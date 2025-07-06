@@ -4,9 +4,10 @@ import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageSquare, Share, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import PostCreationModal from '@/components/PostCreationModal';
+import SocialActions from '@/components/SocialActions';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -32,7 +33,9 @@ interface PagePost {
   is_featured: boolean;
   likes_count: number;
   comments_count: number;
+  shared_count: number;
   created_at: string;
+  created_by?: string;
 }
 
 const DynamicPageContent = () => {
@@ -206,22 +209,26 @@ const DynamicPageContent = () => {
                       />
                     </div>
                   )}
-                  
-                  <div className="flex items-center justify-between pt-4 border-t">
-                    <div className="flex items-center space-x-4">
-                      <Button variant="ghost" size="sm">
-                        <Heart className="w-4 h-4 mr-1" />
-                        {post.likes_count}
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <MessageSquare className="w-4 h-4 mr-1" />
-                        {post.comments_count}
-                      </Button>
-                    </div>
-                    <Button variant="ghost" size="sm">
-                      <Share className="w-4 h-4" />
-                    </Button>
-                  </div>
+                   
+                   <SocialActions
+                     postId={post.id}
+                     likesCount={post.likes_count}
+                     commentsCount={post.comments_count}
+                     sharedCount={post.shared_count || 0}
+                     authorId={post.created_by}
+                     onLikeUpdate={(newCount) => {
+                       const updatedPosts = posts.map(p => 
+                         p.id === post.id ? { ...p, likes_count: newCount } : p
+                       );
+                       setPosts(updatedPosts);
+                     }}
+                     onShareUpdate={(newCount) => {
+                       const updatedPosts = posts.map(p => 
+                         p.id === post.id ? { ...p, shared_count: newCount } : p
+                       );
+                       setPosts(updatedPosts);
+                     }}
+                   />
                 </CardContent>
               </Card>
             ))
