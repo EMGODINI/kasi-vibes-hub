@@ -99,6 +99,30 @@ export type Database = {
         }
         Relationships: []
       }
+      dm_conversations: {
+        Row: {
+          created_at: string
+          id: string
+          last_message_at: string | null
+          participant_1: string
+          participant_2: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          participant_1: string
+          participant_2: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          participant_1?: string
+          participant_2?: string
+        }
+        Relationships: []
+      }
       page_posts: {
         Row: {
           comments_count: number | null
@@ -179,6 +203,42 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_transactions: {
+        Row: {
+          africas_talking_transaction_id: string | null
+          amount_zar: number
+          completed_at: string | null
+          created_at: string
+          id: string
+          room_id: string | null
+          status: string
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          africas_talking_transaction_id?: string | null
+          amount_zar: number
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          room_id?: string | null
+          status?: string
+          transaction_type: string
+          user_id: string
+        }
+        Update: {
+          africas_talking_transaction_id?: string | null
+          amount_zar?: number
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          room_id?: string | null
+          status?: string
+          transaction_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       post_comments: {
         Row: {
           content: string
@@ -232,6 +292,42 @@ export type Database = {
         }
         Relationships: []
       }
+      private_rooms: {
+        Row: {
+          created_at: string
+          emoji: string
+          expires_at: string
+          host_id: string
+          id: string
+          is_active: boolean
+          max_participants: number
+          name: string
+          participant_ids: string[] | null
+        }
+        Insert: {
+          created_at?: string
+          emoji?: string
+          expires_at?: string
+          host_id: string
+          id?: string
+          is_active?: boolean
+          max_participants?: number
+          name: string
+          participant_ids?: string[] | null
+        }
+        Update: {
+          created_at?: string
+          emoji?: string
+          expires_at?: string
+          host_id?: string
+          id?: string
+          is_active?: boolean
+          max_participants?: number
+          name?: string
+          participant_ids?: string[] | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -256,6 +352,33 @@ export type Database = {
           id?: string
           updated_at?: string
           username?: string
+        }
+        Relationships: []
+      }
+      user_badges: {
+        Row: {
+          badge_type: Database["public"]["Enums"]["badge_type"]
+          granted_at: string
+          granted_by: string | null
+          id: string
+          is_active: boolean
+          user_id: string
+        }
+        Insert: {
+          badge_type: Database["public"]["Enums"]["badge_type"]
+          granted_at?: string
+          granted_by?: string | null
+          id?: string
+          is_active?: boolean
+          user_id: string
+        }
+        Update: {
+          badge_type?: Database["public"]["Enums"]["badge_type"]
+          granted_at?: string
+          granted_by?: string | null
+          id?: string
+          is_active?: boolean
+          user_id?: string
         }
         Relationships: []
       }
@@ -320,6 +443,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      badge_type: "admin" | "verified"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -436,6 +560,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      badge_type: ["admin", "verified"],
     },
   },
 } as const
