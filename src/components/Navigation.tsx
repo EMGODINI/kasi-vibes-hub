@@ -9,7 +9,7 @@ const Navigation = () => {
   return (
     <>
       {/* Top Navigation Bar */}
-      <nav className="sticky top-0 z-50 bg-gray-900/80 backdrop-blur-md border-b border-orange-500/30 shadow-lg">
+      <nav className="sticky top-0 z-50 kasi-glass border-b border-primary/30 shadow-lg animate-shimmer-gold">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16 relative">
             <NavigationLogo />

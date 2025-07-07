@@ -44,10 +44,10 @@ export default function ReelUploadModal({ open, onClose, onUploaded }: ReelUploa
           .from('reels')
           .upload(thumbPath, thumbnail);
         if (thumbError) throw thumbError;
-        thumbnailUrl = supabase.storage.from('reels').getPublicUrl(thumbPath).publicUrl;
+        thumbnailUrl = supabase.storage.from('reels').getPublicUrl(thumbPath).data.publicUrl;
       }
 
-      const videoUrl = supabase.storage.from('reels').getPublicUrl(videoPath).publicUrl;
+      const videoUrl = supabase.storage.from('reels').getPublicUrl(videoPath).data.publicUrl;
 
       // Save metadata to DB
       const { error: dbError } = await supabase

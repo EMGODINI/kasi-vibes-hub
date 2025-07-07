@@ -13,6 +13,7 @@ import DashboardSkeleton from '@/components/DashboardSkeleton';
 import TrendingSection from '@/components/TrendingSection';
 import ReelsGallery from '@/components/ReelsGallery';
 import CommunityFeed from '@/components/CommunityFeed';
+import FloatingDJDeck from '@/components/FloatingDJDeck';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -197,7 +198,7 @@ const Dashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black">
+    <div className="min-h-screen bg-gradient-to-br from-charcoal-black via-deep-maroon/20 to-charcoal-black">
       <Navigation />
       
       <div className="container mx-auto px-4 py-6 pb-20">
@@ -205,15 +206,15 @@ const Dashboard = () => {
         <div className="mb-6 animate-fade-in-up">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-2xl font-bold text-white font-montserrat">
+              <h1 className="text-3xl font-bold township-header font-orbitron mb-2">
                 Awe {profile?.username || 'User'}! 👊🏾
               </h1>
-              <p className="text-gray-400">Azi'She Khe - What's happening in your kasi today?</p>
+              <p className="text-muted-foreground neon-text">Azi'She Khe - What's happening in your kasi today?</p>
             </div>
             <div className="flex items-center space-x-3">
-              <Avatar className="w-12 h-12 ring-2 ring-orange-500/50 spring-bounce hover:ring-orange-400">
+              <Avatar className="w-12 h-12 ring-2 ring-primary/50 animate-pulse-neon hover:ring-accent">
                 <AvatarImage src={profile?.avatar_url} />
-                <AvatarFallback className="bg-orange-100 text-orange-600">
+                <AvatarFallback className="bg-primary/20 text-primary">
                   {profile?.username?.[0] || 'U'}
                 </AvatarFallback>
               </Avatar>
@@ -221,7 +222,7 @@ const Dashboard = () => {
                 variant="ghost"
                 size="sm"
                 onClick={signOut}
-                className="text-gray-400 hover:text-orange-500 touch-target"
+                className="text-muted-foreground hover:text-primary touch-target"
               >
                 <LogOut className="w-4 h-4" />
               </Button>
@@ -235,7 +236,7 @@ const Dashboard = () => {
           <div className="lg:col-span-2">
             {/* Pages Grid */}
             <div className="mb-8">
-              <h2 className="text-xl font-bold text-white mb-4">Explore Categories</h2>
+              <h2 className="text-xl font-bold township-header mb-4">Explore Categories</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <StaggeredList staggerDelay={100}>
                   {pages.map((page) => (
@@ -247,9 +248,9 @@ const Dashboard = () => {
 
             {/* Community Feed */}
             <div>
-              <h2 className="text-xl font-bold text-white mb-4 flex items-center space-x-2">
+              <h2 className="text-xl font-bold township-header mb-4 flex items-center space-x-2">
                 <span>Community Feed</span>
-                <Badge className="bg-green-600 text-white">Live</Badge>
+                <Badge className="bg-accent text-accent-foreground animate-pulse-neon">Live</Badge>
               </h2>
               <CommunityFeed 
                 posts={posts} 
@@ -266,15 +267,18 @@ const Dashboard = () => {
             
             {/* Reels Gallery */}
             <div>
-              <h3 className="text-lg font-bold text-white mb-4 flex items-center space-x-2">
+              <h3 className="text-lg font-bold township-header mb-4 flex items-center space-x-2">
                 <span>Reels</span>
-                <Badge className="bg-purple-600 text-white">Hot</Badge>
+                <Badge className="bg-street-purple/80 text-foreground animate-pulse-neon">Hot</Badge>
               </h3>
               <ReelsGallery />
             </div>
           </div>
         </div>
       </div>
+      
+      {/* Floating DJ Deck */}
+      <FloatingDJDeck />
     </div>
   );
 };
