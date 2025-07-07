@@ -15,7 +15,7 @@ const TopMusicPlayer = () => {
   return (
     <Card className="kasi-glass p-4 animate-shimmer-gold">
       <div className="flex items-center space-x-4">
-        <Avatar className="w-16 h-16 border-2 border-primary animate-glow-breathe">
+        <Avatar className="w-16 h-16 border-2 border-primary">
           <AvatarImage src={currentTrack.avatar} alt={currentTrack.artist} />
           <AvatarFallback className="bg-primary/20 text-primary font-bold">
             3MG
@@ -52,10 +52,7 @@ const TopMusicPlayer = () => {
         <div className="flex items-center space-x-2">
           <Button
             onClick={() => setIsPlaying(!isPlaying)}
-            className={`
-              rounded-full w-12 h-12 kasi-button
-              ${isPlaying ? 'animate-party-pulse' : 'animate-glow-breathe'}
-            `}
+            className="rounded-full w-12 h-12 kasi-button"
           >
             {isPlaying ? (
               <Pause className="w-6 h-6" />

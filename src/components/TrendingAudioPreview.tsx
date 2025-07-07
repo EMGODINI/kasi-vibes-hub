@@ -50,7 +50,7 @@ const TrendingAudioPreview = () => {
       <h2 className="text-xl font-bold neon-text font-montserrat">🔥 Trending Now</h2>
       <div className="grid grid-cols-1 gap-3">
         {tracks.map((track) => (
-          <Card key={track.id} className="kasi-glass mobile-card p-4 hover:animate-glow-breathe transition-all duration-300">
+          <Card key={track.id} className="kasi-glass mobile-card p-4 hover:scale-105 transition-all duration-300">
             <div className="flex items-center space-x-3">
               <div className="relative">
                 <Avatar className="w-12 h-12 border-2 border-primary/50">

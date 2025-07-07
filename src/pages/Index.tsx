@@ -171,7 +171,7 @@ const Index = () => {
                   <img 
                     src="/lovable-uploads/924af0ae-dd6b-494b-a23c-37583952b3e8.png" 
                     alt="3MGODINI Logo" 
-                    className="w-24 h-24 mx-auto mb-4 animate-glow-breathe"
+                    className="w-24 h-24 mx-auto mb-4"
                   />
                 </div>
                 
