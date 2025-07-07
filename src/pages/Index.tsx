@@ -10,6 +10,8 @@ import { Eye, EyeOff } from 'lucide-react';
 import FloatingIcons from '@/components/FloatingIcons';
 import PasswordStrengthIndicator from '@/components/PasswordStrengthIndicator';
 import WelcomeAudio from '@/components/WelcomeAudio';
+import TopMusicPlayer from '@/components/TopMusicPlayer';
+import TrendingAudioPreview from '@/components/TrendingAudioPreview';
 import { useAuth } from '@/hooks/useAuth';
 
 const Index = () => {
@@ -75,146 +77,219 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-black relative overflow-hidden">
-      {/* Space-like background with stars */}
-      <div className="absolute inset-0 bg-[radial-gradient(white,rgba(255,255,255,.2)_1px,transparent_1px)] [background-size:50px_50px] opacity-20"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(white,rgba(255,255,255,.1)_1px,transparent_1px)] [background-size:100px_100px] opacity-30"></div>
+    <div className="min-h-screen bg-gradient-to-br from-charcoal-black via-deep-maroon to-charcoal-black relative overflow-hidden">
+      {/* Ambient background effects */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(255,215,0,0.1)_0%,transparent_50%)]"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(0,255,255,0.1)_0%,transparent_50%)]"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_80%,rgba(255,20,147,0.1)_0%,transparent_50%)]"></div>
       
       <FloatingIcons />
       <WelcomeAudio shouldPlay={showWelcomeAudio} onComplete={() => setShowWelcomeAudio(false)} />
       
-      <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
-        <div className="w-full max-w-md">
-          {/* Welcome Header */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-32 h-32 mb-6 animate-pulse">
-              <img 
-                src="/lovable-uploads/924af0ae-dd6b-494b-a23c-37583952b3e8.png" 
-                alt="3MGODINI Logo" 
-                className="w-full h-full object-contain drop-shadow-2xl"
-              />
+      <div className="relative z-10 min-h-screen">
+        {/* Mobile-first layout */}
+        <div className="block lg:hidden">
+          {/* Mobile Layout */}
+          <div className="flex flex-col h-screen">
+            {/* Top Music Player */}
+            <div className="p-4">
+              <TopMusicPlayer />
             </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 via-teal-400 to-orange-400 bg-clip-text text-transparent font-orbitron mb-4">
-              Welcome to 3MGODINI
-            </h1>
-            <p className="text-gray-300 text-lg font-inter mb-6">
-              Awe! Welcome to the ultimate kasi social hub. Share your stance, drop your beats, and connect with the culture.
-            </p>
+            
+            {/* Middle Trending Content */}
+            <div className="flex-1 px-4 pb-4 overflow-y-auto">
+              <TrendingAudioPreview />
+            </div>
+            
+            {/* Bottom Signup */}
+            <div className="p-4 border-t border-primary/20">
+              <Card className="kasi-glass">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center justify-center mb-4">
+                    <img 
+                      src="/lovable-uploads/924af0ae-dd6b-494b-a23c-37583952b3e8.png" 
+                      alt="3MGODINI Logo" 
+                      className="w-16 h-16 object-contain animate-pulse-neon"
+                    />
+                  </div>
+                  <CardTitle className="text-center township-header text-lg">
+                    Thatha Lento!
+                  </CardTitle>
+                  <CardDescription className="text-center text-muted-foreground">
+                    Join the kasi revolution
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <Button 
+                    onClick={() => navigate('/auth')} 
+                    className="w-full kasi-button animate-shimmer-gold"
+                  >
+                    Sign In
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full border-primary/50 text-primary hover:bg-primary/10"
+                  >
+                    Create Account
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
           </div>
+        </div>
 
-          {/* Registration Card */}
-          <Card className="backdrop-blur-md bg-gray-900/70 border border-orange-500/30 shadow-2xl">
-            <CardHeader>
-              <CardTitle className="text-center text-white font-montserrat text-2xl">
-                Thatha Lento!
-              </CardTitle>
-              <CardDescription className="text-center text-gray-400 text-lg">
-                Join the movement and connect with your kasi
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleRegister} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="username" className="text-white">Username</Label>
-                  <Input 
-                    id="username" 
-                    type="text" 
-                    placeholder="Choose your kasi name"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                    className="bg-gray-800 border-orange-500/50 text-white placeholder:text-gray-400 focus:border-orange-500"
-                  />
-                  {errors.username && <p className="text-red-400 text-sm">{errors.username}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-white">Email</Label>
-                  <Input 
-                    id="email" 
-                    type="email" 
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="bg-gray-800 border-orange-500/50 text-white placeholder:text-gray-400 focus:border-orange-500"
-                  />
-                  {errors.email && <p className="text-red-400 text-sm">{errors.email}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-white">Password</Label>
-                  <div className="relative">
-                    <Input 
-                      id="password" 
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Create a strong password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      className="bg-gray-800 border-orange-500/50 text-white placeholder:text-gray-400 focus:border-orange-500 pr-10"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </Button>
-                  </div>
-                  {errors.password && <p className="text-red-400 text-sm">{errors.password}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="confirm-password" className="text-white">Confirm Password</Label>
-                  <div className="relative">
-                    <Input 
-                      id="confirm-password" 
-                      type={showConfirmPassword ? "text" : "password"}
-                      placeholder="Confirm your password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      required
-                      className="bg-gray-800 border-orange-500/50 text-white placeholder:text-gray-400 focus:border-orange-500 pr-10"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    >
-                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </Button>
-                  </div>
-                  {errors.confirmPassword && <p className="text-red-400 text-sm">{errors.confirmPassword}</p>}
-                </div>
-                
-                <PasswordStrengthIndicator password={password} />
-                
-                <Button 
-                  type="submit" 
-                  className="w-full bg-gradient-to-r from-orange-600 to-teal-400 hover:from-orange-700 hover:to-teal-500 text-white font-semibold py-3 text-lg rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 hover:scale-105"
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Creating Account...' : 'Thatha Lento!'}
-                </Button>
-              </form>
-
-              <div className="text-center mt-6">
-                <p className="text-gray-400 mb-4">Already part of the family?</p>
-                <Button 
-                  variant="outline"
-                  onClick={() => navigate('/auth')}
-                  className="border-orange-500/50 text-orange-400 hover:bg-orange-500/10 hover:text-orange-300"
-                >
-                  Sign In Instead
-                </Button>
+        {/* Desktop Layout */}
+        <div className="hidden lg:block">
+          <div className="grid grid-cols-12 h-screen">
+            {/* Left Content Area */}
+            <div className="col-span-8 flex flex-col p-6">
+              {/* Top Music Player */}
+              <div className="mb-6">
+                <TopMusicPlayer />
               </div>
-            </CardContent>
-          </Card>
+              
+              {/* Hero Section */}
+              <div className="text-center mb-8">
+                <h1 className="text-6xl font-bold township-header mb-4">
+                  Welcome to 3MGODINI
+                </h1>
+                <p className="text-xl text-muted-foreground font-inter mb-6">
+                  Awe! Welcome to the ultimate kasi social hub. Share your stance, drop your beats, and connect with the culture.
+                </p>
+              </div>
+              
+              {/* Trending Content */}
+              <div className="flex-1 overflow-y-auto">
+                <TrendingAudioPreview />
+              </div>
+            </div>
+            
+            {/* Right Signup Panel */}
+            <div className="col-span-4 bg-gradient-to-br from-background/50 to-card/50 backdrop-blur-lg border-l border-primary/20 p-6 flex flex-col justify-center">
+              <div className="max-w-sm mx-auto w-full">
+                <div className="text-center mb-8">
+                  <img 
+                    src="/lovable-uploads/924af0ae-dd6b-494b-a23c-37583952b3e8.png" 
+                    alt="3MGODINI Logo" 
+                    className="w-24 h-24 mx-auto mb-4 animate-glow-breathe"
+                  />
+                </div>
+                
+                <Card className="party-glass">
+                  <CardHeader>
+                    <CardTitle className="text-center township-header text-2xl">
+                      Thatha Lento!
+                    </CardTitle>
+                    <CardDescription className="text-center text-muted-foreground text-lg">
+                      Join the movement and connect with your kasi
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <form onSubmit={handleRegister} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="username" className="text-foreground">Username</Label>
+                        <Input 
+                          id="username" 
+                          type="text" 
+                          placeholder="Choose your kasi name"
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
+                          required
+                          className="bg-card/50 border-primary/50 text-foreground placeholder:text-muted-foreground focus:border-primary"
+                        />
+                        {errors.username && <p className="text-destructive text-sm">{errors.username}</p>}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="email" className="text-foreground">Email</Label>
+                        <Input 
+                          id="email" 
+                          type="email" 
+                          placeholder="Enter your email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
+                          className="bg-card/50 border-primary/50 text-foreground placeholder:text-muted-foreground focus:border-primary"
+                        />
+                        {errors.email && <p className="text-destructive text-sm">{errors.email}</p>}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="password" className="text-foreground">Password</Label>
+                        <div className="relative">
+                          <Input 
+                            id="password" 
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Create a strong password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            className="bg-card/50 border-primary/50 text-foreground placeholder:text-muted-foreground focus:border-primary pr-10"
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:text-foreground"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </Button>
+                        </div>
+                        {errors.password && <p className="text-destructive text-sm">{errors.password}</p>}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="confirm-password" className="text-foreground">Confirm Password</Label>
+                        <div className="relative">
+                          <Input 
+                            id="confirm-password" 
+                            type={showConfirmPassword ? "text" : "password"}
+                            placeholder="Confirm your password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            required
+                            className="bg-card/50 border-primary/50 text-foreground placeholder:text-muted-foreground focus:border-primary pr-10"
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:text-foreground"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          >
+                            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </Button>
+                        </div>
+                        {errors.confirmPassword && <p className="text-destructive text-sm">{errors.confirmPassword}</p>}
+                      </div>
+                      
+                      <PasswordStrengthIndicator password={password} />
+                      
+                      <Button 
+                        type="submit" 
+                        className="w-full kasi-button animate-shimmer-gold font-semibold py-3 text-lg"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? 'Creating Account...' : 'Thatha Lento!'}
+                      </Button>
+                    </form>
+
+                    <div className="text-center mt-6">
+                      <p className="text-muted-foreground mb-4">Already part of the family?</p>
+                      <Button 
+                        variant="outline"
+                        onClick={() => navigate('/auth')}
+                        className="border-primary/50 text-primary hover:bg-primary/10 hover:text-primary"
+                      >
+                        Sign In Instead
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
