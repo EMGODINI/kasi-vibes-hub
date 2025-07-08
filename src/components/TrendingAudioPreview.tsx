@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Play, Pause, Heart, MessageCircle, Share2 } from 'lucide-react';
+import { useGuestLimit } from '@/hooks/useGuestLimit';
+import GuestLimitModal from './GuestLimitModal';
 
 interface TrendingTrack {
   id: string;
@@ -15,6 +17,7 @@ interface TrendingTrack {
 }
 
 const TrendingAudioPreview = () => {
+  const { trackPostView, showLimitModal, setShowLimitModal, isLimitReached } = useGuestLimit();
   const [tracks] = useState<TrendingTrack[]>([
     {
       id: '1',
