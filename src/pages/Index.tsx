@@ -12,6 +12,7 @@ import PasswordStrengthIndicator from '@/components/PasswordStrengthIndicator';
 import WelcomeAudio from '@/components/WelcomeAudio';
 import TopMusicPlayer from '@/components/TopMusicPlayer';
 import TrendingAudioPreview from '@/components/TrendingAudioPreview';
+import WhatIs3MGodini from '@/components/WhatIs3MGodini';
 import { useAuth } from '@/hooks/useAuth';
 
 const Index = () => {
@@ -77,72 +78,54 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-charcoal-black via-deep-maroon to-charcoal-black relative overflow-hidden">
-      {/* Ambient background effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(255,215,0,0.1)_0%,transparent_50%)]"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(0,255,255,0.1)_0%,transparent_50%)]"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_80%,rgba(255,20,147,0.1)_0%,transparent_50%)]"></div>
-      
-      <FloatingIcons />
+    <div className="min-h-screen bg-gradient-to-br from-background via-secondary to-background relative">
       <WelcomeAudio shouldPlay={showWelcomeAudio} onComplete={() => setShowWelcomeAudio(false)} />
       
       <div className="relative z-10 min-h-screen">
         {/* Mobile-first layout */}
         <div className="block lg:hidden">
           {/* Mobile Layout */}
-          <div className="flex flex-col h-screen">
+          <div className="flex flex-col h-screen bg-background">
             {/* Top Music Player */}
             <div className="p-4">
               <TopMusicPlayer />
             </div>
             
-            {/* Middle Trending Content */}
+            {/* Middle Content - What is 3MGODINI */}
+            <div className="px-4 pb-4">
+              <WhatIs3MGodini />
+            </div>
+            
+            {/* Trending Content */}
             <div className="flex-1 px-4 pb-4 overflow-y-auto">
               <TrendingAudioPreview />
             </div>
             
-            {/* Bottom Signup */}
-            <div className="p-4 border-t border-primary/20">
-              <Card className="kasi-glass">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center justify-center mb-4">
-                    <img 
-                      src="/lovable-uploads/924af0ae-dd6b-494b-a23c-37583952b3e8.png" 
-                      alt="3MGODINI Logo" 
-                      className="w-16 h-16 object-contain animate-pulse-neon"
-                    />
-                  </div>
-                  <CardTitle className="text-center township-header text-lg">
-                    Thatha Lento!
-                  </CardTitle>
-                  <CardDescription className="text-center text-muted-foreground">
-                    Join the kasi revolution
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <Button 
-                    onClick={() => navigate('/auth')} 
-                    className="w-full kasi-button animate-shimmer-gold"
-                  >
-                    Sign In
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="w-full border-primary/50 text-primary hover:bg-primary/10"
-                  >
-                    Create Account
-                  </Button>
-                </CardContent>
-              </Card>
+            {/* Bottom CTA */}
+            <div className="p-4 border-t border-border bg-card">
+              <div className="space-y-3">
+                <Button 
+                  onClick={() => navigate('/auth')} 
+                  className="w-full bg-gradient-to-r from-primary to-accent text-white font-semibold py-3 text-lg hover:opacity-90 transition-all duration-300"
+                >
+                  🔥 Thatha Lento Nge Email
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full border-border text-foreground hover:bg-secondary"
+                >
+                  🎧 Browse as Guest
+                </Button>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Desktop Layout */}
         <div className="hidden lg:block">
-          <div className="grid grid-cols-12 h-screen">
+          <div className="grid grid-cols-12 h-screen bg-background">
             {/* Left Content Area */}
-            <div className="col-span-8 flex flex-col p-6">
+            <div className="col-span-8 flex flex-col p-8">
               {/* Top Music Player */}
               <div className="mb-6">
                 <TopMusicPlayer />
@@ -150,12 +133,17 @@ const Index = () => {
               
               {/* Hero Section */}
               <div className="text-center mb-8">
-                <h1 className="text-6xl font-bold township-header mb-4">
+                <h1 className="text-6xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent mb-4">
                   Welcome to 3MGODINI
                 </h1>
-                <p className="text-xl text-muted-foreground font-inter mb-6">
-                  Awe! Welcome to the ultimate kasi social hub. Share your stance, drop your beats, and connect with the culture.
+                <p className="text-xl text-muted-foreground font-inter mb-6 max-w-3xl mx-auto">
+                  Awe mfethu! Welcome to the ultimate kasi social hub. Share your stance, drop your beats, and connect with the culture 🔥
                 </p>
+              </div>
+              
+              {/* What is 3MGODINI section */}
+              <div className="mb-8">
+                <WhatIs3MGodini />
               </div>
               
               {/* Trending Content */}
@@ -165,26 +153,24 @@ const Index = () => {
             </div>
             
             {/* Right Signup Panel */}
-            <div className="col-span-4 bg-gradient-to-br from-background/50 to-card/50 backdrop-blur-lg border-l border-primary/20 p-6 flex flex-col justify-center">
+            <div className="col-span-4 bg-card border-l border-border p-8 flex flex-col justify-center">
               <div className="max-w-sm mx-auto w-full">
                 <div className="text-center mb-8">
                   <img 
                     src="/lovable-uploads/924af0ae-dd6b-494b-a23c-37583952b3e8.png" 
                     alt="3MGODINI Logo" 
-                    className="w-24 h-24 mx-auto mb-4"
+                    className="w-24 h-24 mx-auto mb-4 rounded-2xl shadow-lg"
                   />
+                  <h2 className="text-2xl font-bold text-foreground mb-2">
+                    Join the Community
+                  </h2>
+                  <p className="text-muted-foreground">
+                    Azishe Khe! Connect with your people ✊🏾
+                  </p>
                 </div>
                 
-                <Card className="party-glass">
-                  <CardHeader>
-                    <CardTitle className="text-center township-header text-2xl">
-                      Thatha Lento!
-                    </CardTitle>
-                    <CardDescription className="text-center text-muted-foreground text-lg">
-                      Join the movement and connect with your kasi
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
+                <Card className="clean-card">
+                  <CardContent className="p-6">
                     <form onSubmit={handleRegister} className="space-y-4">
                       <div className="space-y-2">
                         <Label htmlFor="username" className="text-foreground">Username</Label>
@@ -268,10 +254,10 @@ const Index = () => {
                       
                       <Button 
                         type="submit" 
-                        className="w-full kasi-button animate-shimmer-gold font-semibold py-3 text-lg"
+                        className="w-full bg-gradient-to-r from-primary to-accent text-white font-semibold py-3 text-lg hover:opacity-90 transition-all duration-300"
                         disabled={isLoading}
                       >
-                        {isLoading ? 'Creating Account...' : 'Thatha Lento!'}
+                        {isLoading ? 'Creating Account...' : '🔥 Thatha Lento Nge Email'}
                       </Button>
                     </form>
 

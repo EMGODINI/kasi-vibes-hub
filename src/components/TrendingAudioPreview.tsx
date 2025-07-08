@@ -47,21 +47,21 @@ const TrendingAudioPreview = () => {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-bold neon-text font-montserrat">🔥 Trending Now</h2>
+      <h2 className="text-xl font-bold text-foreground font-inter">🔥 Trending Now</h2>
       <div className="grid grid-cols-1 gap-3">
         {tracks.map((track) => (
-          <Card key={track.id} className="kasi-glass mobile-card p-4 hover:scale-105 transition-all duration-300">
+          <Card key={track.id} className="clean-card p-4 hover:soft-shadow transition-all duration-300">
             <div className="flex items-center space-x-3">
               <div className="relative">
                 <Avatar className="w-12 h-12 border-2 border-primary/50">
                   <AvatarImage src={track.avatar} alt={track.artist} />
-                  <AvatarFallback className="bg-primary/20 text-primary">
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white">
                     {track.artist[0]}
                   </AvatarFallback>
                 </Avatar>
                 <Button
                   size="icon"
-                  className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full kasi-button animate-pulse-neon"
+                  className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent text-white shadow-md hover:opacity-90 transition-all duration-300"
                 >
                   <Play className="w-3 h-3" />
                 </Button>

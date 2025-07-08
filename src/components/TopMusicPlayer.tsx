@@ -13,11 +13,11 @@ const TopMusicPlayer = () => {
   });
 
   return (
-    <Card className="kasi-glass p-4 animate-shimmer-gold">
+    <Card className="clean-card p-4 hover:soft-shadow transition-all duration-300">
       <div className="flex items-center space-x-4">
-        <Avatar className="w-16 h-16 border-2 border-primary">
+        <Avatar className="w-16 h-16 border-2 border-primary shadow-lg">
           <AvatarImage src={currentTrack.avatar} alt={currentTrack.artist} />
-          <AvatarFallback className="bg-primary/20 text-primary font-bold">
+          <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white font-bold">
             3MG
           </AvatarFallback>
         </Avatar>
@@ -36,8 +36,8 @@ const TopMusicPlayer = () => {
               <div
                 key={i}
                 className={`
-                  w-1 bg-gradient-to-t from-primary via-accent to-neon-gold rounded-full audio-wave
-                  ${isPlaying ? 'animate-pulse-neon' : 'h-1'}
+                  w-1 bg-gradient-to-t from-primary to-accent rounded-full
+                  ${isPlaying ? 'animate-bounce' : 'h-1'}
                 `}
                 style={{
                   animationDelay: `${i * 0.05}s`,
@@ -52,7 +52,7 @@ const TopMusicPlayer = () => {
         <div className="flex items-center space-x-2">
           <Button
             onClick={() => setIsPlaying(!isPlaying)}
-            className="rounded-full w-12 h-12 kasi-button"
+            className="rounded-full w-12 h-12 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-all duration-300 text-white shadow-lg"
           >
             {isPlaying ? (
               <Pause className="w-6 h-6" />

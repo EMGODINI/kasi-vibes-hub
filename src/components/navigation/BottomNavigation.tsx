@@ -66,7 +66,7 @@ const BottomNavigation = () => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-lg border-t border-gray-800 z-50 md:hidden">
+    <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-lg border-t border-border z-50 md:hidden shadow-lg">
       <div className="flex items-center justify-around py-2">
         {navItems.map((item, index) => {
           const Icon = item.icon;
@@ -78,10 +78,10 @@ const BottomNavigation = () => {
               variant="ghost"
               size="sm"
               onClick={() => navigate(item.path)}
-              className={`flex flex-col items-center space-y-1 text-xs px-3 py-2 h-auto ${
+              className={`flex flex-col items-center space-y-1 text-xs px-3 py-2 h-auto transition-all duration-200 ${
                 isActive 
-                  ? 'text-orange-500 bg-orange-500/10' 
-                  : 'text-gray-400 hover:text-orange-400'
+                  ? 'text-primary bg-primary/10' 
+                  : 'text-muted-foreground hover:text-primary'
               }`}
             >
               <Icon className="w-5 h-5" />

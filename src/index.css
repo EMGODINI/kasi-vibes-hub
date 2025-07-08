@@ -9,39 +9,39 @@
 
 @layer base {
   :root {
-    /* Afro-futuristic kasi color palette */
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    /* Modern Clean Palette - Coursera/Instagram inspired */
+    --background: 0 0% 98%;
+    --foreground: 0 0% 15%;
 
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 15%;
 
-    --popover: 240 5% 6%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 15%;
 
-    /* Neon Gold primary */
-    --primary: 43 89% 65%;
-    --primary-foreground: 240 10% 3.9%;
+    /* Instagram coral/orange primary */
+    --primary: 16 100% 66%;
+    --primary-foreground: 0 0% 98%;
 
-    /* Deep maroon secondary */
-    --secondary: 0 45% 15%;
-    --secondary-foreground: 43 89% 65%;
+    /* Warm grey secondary */
+    --secondary: 220 13% 91%;
+    --secondary-foreground: 0 0% 15%;
 
-    --muted: 240 5% 15%;
-    --muted-foreground: 240 5% 65%;
+    --muted: 220 13% 91%;
+    --muted-foreground: 0 0% 45%;
 
-    /* Electric teal accent */
-    --accent: 180 100% 45%;
-    --accent-foreground: 240 10% 3.9%;
+    /* Instagram purple-pink accent */
+    --accent: 310 50% 70%;
+    --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 43 89% 65%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 16 100% 66%;
 
-    --radius: 1rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 240 10% 3.9%;
     --sidebar-foreground: 0 0% 98%;
@@ -52,20 +52,20 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 43 89% 65%;
 
-    /* Kasi-inspired color palette */
-    --neon-gold: 43 89% 65%;
-    --electric-teal: 180 100% 45%;
-    --deep-maroon: 0 45% 15%;
-    --charcoal-black: 240 10% 3.9%;
-    --neon-pink: 320 100% 65%;
-    --township-orange: 25 95% 58%;
-    --street-purple: 270 100% 50%;
+    /* Modern accent colors */
+    --instagram-orange: 16 100% 66%;
+    --instagram-purple: 310 50% 70%;
+    --instagram-pink: 340 75% 68%;
+    --warm-grey: 220 13% 91%;
+    --soft-shadow: 220 13% 85%;
+    --coursera-blue: 210 100% 56%;
+    --soundcloud-orange: 16 100% 50%;
     
-    /* Gradients */
-    --gradient-kasi: linear-gradient(135deg, hsl(43, 89%, 65%), hsl(25, 95%, 58%));
-    --gradient-night: linear-gradient(135deg, hsl(240, 10%, 3.9%), hsl(0, 45%, 15%));
-    --gradient-electric: linear-gradient(135deg, hsl(180, 100%, 45%), hsl(270, 100%, 50%));
-    --gradient-fire: linear-gradient(135deg, hsl(25, 95%, 58%), hsl(320, 100%, 65%));
+    /* Modern gradients */
+    --gradient-instagram: linear-gradient(135deg, hsl(16, 100%, 66%), hsl(310, 50%, 70%));
+    --gradient-soft: linear-gradient(135deg, hsl(0, 0%, 100%), hsl(220, 13%, 91%));
+    --gradient-purple-pink: linear-gradient(135deg, hsl(310, 50%, 70%), hsl(340, 75%, 68%));
+    --gradient-warm: linear-gradient(135deg, hsl(16, 100%, 66%), hsl(340, 75%, 68%));
     
     /* Glow effects */
     --glow-gold: 0 0 20px hsl(43, 89%, 65%, 0.5);
@@ -185,18 +185,29 @@
     animation: partyPulse 1s ease-in-out infinite alternate;
   }
 
-  /* Glass and backdrop effects */
-  .kasi-glass {
-    backdrop-filter: blur(20px) saturate(180%);
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 215, 0, 0.2);
-    box-shadow: var(--glow-gold);
+  /* Modern clean glass effects */
+  .modern-glass {
+    backdrop-filter: blur(20px) saturate(120%);
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.1),
+      0 2px 8px rgba(0, 0, 0, 0.05);
   }
 
-  .party-glass {
-    backdrop-filter: blur(16px) saturate(200%);
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(0, 255, 255, 0.1));
-    border: 1px solid rgba(255, 215, 0, 0.3);
+  .soft-shadow {
+    box-shadow: 
+      0 2px 8px rgba(0, 0, 0, 0.08),
+      0 1px 4px rgba(0, 0, 0, 0.06);
+  }
+
+  .clean-card {
+    background: white;
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    box-shadow: 
+      0 1px 3px rgba(0, 0, 0, 0.1),
+      0 1px 2px rgba(0, 0, 0, 0.06);
   }
 
   .taxi-glow {

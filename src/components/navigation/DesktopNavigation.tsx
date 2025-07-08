@@ -52,7 +52,7 @@ const DesktopNavigation = () => {
       <Button
         variant="ghost"
         size="sm"
-        className="text-gray-300 hover:text-orange-400 hover:bg-orange-500/10"
+        className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
         onClick={() => navigate('/dashboard')}
       >
         <Home className="w-4 h-4 mr-1" />
@@ -67,7 +67,7 @@ const DesktopNavigation = () => {
             key={page.id}
             variant="ghost"
             size="sm"
-            className="text-gray-300 hover:text-orange-400 hover:bg-orange-500/10"
+            className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
             onClick={() => navigate(`/page/${page.slug}`)}
           >
             <IconComponent className="w-4 h-4 mr-1" />
