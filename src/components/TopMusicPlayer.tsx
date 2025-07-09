@@ -3,20 +3,42 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Play, Pause, SkipForward, SkipBack, Volume2 } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 const TopMusicPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(true);
-  const [currentTrack] = useState({
+  
+  // Fetch featured track from database
+  const { data: featuredTrack } = useQuery({
+    queryKey: ['featured-track'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('tracks')
+        .select('*')
+        .eq('is_active', true)
+        .eq('is_featured', true)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+      
+      if (error && error.code !== 'PGRST116') throw error;
+      return data;
+    }
+  });
+
+  // Fallback to default if no featured track
+  const currentTrack = featuredTrack || {
     title: 'Welcome to 3MGODINI',
     artist: 'Kasi Collective',
-    avatar: '/placeholder.svg'
-  });
+    cover_image_url: '/placeholder.svg'
+  };
 
   return (
     <Card className="clean-card p-4 hover:soft-shadow transition-all duration-300">
       <div className="flex items-center space-x-4">
         <Avatar className="w-16 h-16 border-2 border-primary shadow-lg">
-          <AvatarImage src={currentTrack.avatar} alt={currentTrack.artist} />
+          <AvatarImage src={currentTrack.cover_image_url || '/placeholder.svg'} alt={currentTrack.artist} />
           <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white font-bold">
             3MG
           </AvatarFallback>

@@ -4,49 +4,47 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Play, Pause, Heart, MessageCircle, Share2 } from 'lucide-react';
 import { useGuestLimit } from '@/hooks/useGuestLimit';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import GuestLimitModal from './GuestLimitModal';
-
-interface TrendingTrack {
-  id: string;
-  title: string;
-  artist: string;
-  avatar: string;
-  likes: number;
-  comments: number;
-  isPlaying: boolean;
-}
 
 const TrendingAudioPreview = () => {
   const { trackPostView, showLimitModal, setShowLimitModal, isLimitReached } = useGuestLimit();
-  const [tracks] = useState<TrendingTrack[]>([
-    {
-      id: '1',
-      title: 'Amapiano Fire Mix',
-      artist: 'DJ Maphorisa',
-      avatar: '/placeholder.svg',
-      likes: 2340,
-      comments: 156,
-      isPlaying: false
-    },
-    {
-      id: '2',
-      title: 'Kasi Vibes Only',
-      artist: 'Focalistic',
-      avatar: '/placeholder.svg',
-      likes: 1876,
-      comments: 89,
-      isPlaying: false
-    },
-    {
-      id: '3',
-      title: 'Sunday Chills',
-      artist: 'Kabza De Small',
-      avatar: '/placeholder.svg',
-      likes: 3210,
-      comments: 234,
-      isPlaying: false
+  
+  // Fetch trending tracks from database
+  const { data: tracks = [], isLoading } = useQuery({
+    queryKey: ['trending-tracks'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('tracks')
+        .select('*')
+        .eq('is_active', true)
+        .eq('is_trending', true)
+        .order('created_at', { ascending: false })
+        .limit(5);
+      
+      if (error) throw error;
+      return data || [];
     }
-  ]);
+  });
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <h2 className="text-xl font-bold text-foreground font-inter">🔥 Trending Now</h2>
+        <div className="text-center py-8 text-muted-foreground">Loading trending tracks...</div>
+      </div>
+    );
+  }
+
+  if (tracks.length === 0) {
+    return (
+      <div className="space-y-4">
+        <h2 className="text-xl font-bold text-foreground font-inter">🔥 Trending Now</h2>
+        <div className="text-center py-8 text-muted-foreground">No trending tracks available yet.</div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -57,7 +55,7 @@ const TrendingAudioPreview = () => {
             <div className="flex items-center space-x-3">
               <div className="relative">
                 <Avatar className="w-12 h-12 border-2 border-primary/50">
-                  <AvatarImage src={track.avatar} alt={track.artist} />
+                  <AvatarImage src={track.cover_image_url || '/placeholder.svg'} alt={track.artist} />
                   <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white">
                     {track.artist[0]}
                   </AvatarFallback>
@@ -98,12 +96,12 @@ const TrendingAudioPreview = () => {
                 <Button variant="ghost" size="sm" className="touch-target text-muted-foreground hover:text-primary">
                   <Heart className="w-4 h-4" />
                 </Button>
-                <span className="text-xs text-muted-foreground">{track.likes}</span>
+                <span className="text-xs text-muted-foreground">{track.likes_count}</span>
                 
                 <Button variant="ghost" size="sm" className="touch-target text-muted-foreground hover:text-primary">
                   <MessageCircle className="w-4 h-4" />
                 </Button>
-                <span className="text-xs text-muted-foreground">{track.comments}</span>
+                <span className="text-xs text-muted-foreground">{track.comments_count}</span>
               </div>
             </div>
           </Card>

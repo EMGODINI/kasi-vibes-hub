@@ -9,6 +9,7 @@ import { Upload, Music, Users, FileText, Settings, Play, Pause, Volume2, Layout 
 import Navigation from '@/components/Navigation';
 import ContentUpload from '@/components/ContentUpload';
 import PageManager from '@/components/admin/PageManager';
+import TrackManager from '@/components/admin/TrackManager';
 import { useToast } from '@/hooks/use-toast';
 import ProtectedRoute from '@/components/ProtectedRoute';
 
@@ -56,9 +57,10 @@ const AdminContent = () => {
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 md:grid-cols-6">
+          <TabsList className="grid w-full grid-cols-4 md:grid-cols-7">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="pages">Pages</TabsTrigger>
+            <TabsTrigger value="tracks">Tracks</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="upload">Upload</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
@@ -135,6 +137,11 @@ const AdminContent = () => {
           {/* New Pages Tab */}
           <TabsContent value="pages" className="space-y-6">
             <PageManager />
+          </TabsContent>
+
+          {/* Tracks Tab */}
+          <TabsContent value="tracks" className="space-y-6">
+            <TrackManager />
           </TabsContent>
 
           <TabsContent value="content" className="space-y-6">

@@ -360,6 +360,57 @@ export type Database = {
         }
         Relationships: []
       }
+      tracks: {
+        Row: {
+          artist: string
+          audio_url: string | null
+          comments_count: number | null
+          cover_image_url: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_featured: boolean | null
+          is_trending: boolean | null
+          likes_count: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          artist: string
+          audio_url?: string | null
+          comments_count?: number | null
+          cover_image_url?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          is_trending?: boolean | null
+          likes_count?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          artist?: string
+          audio_url?: string | null
+          comments_count?: number | null
+          cover_image_url?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          is_trending?: boolean | null
+          likes_count?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_badges: {
         Row: {
           badge_type: Database["public"]["Enums"]["badge_type"]
