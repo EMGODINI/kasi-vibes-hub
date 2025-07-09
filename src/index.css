@@ -9,37 +9,37 @@
 
 @layer base {
   :root {
-    /* Modern Clean Palette - Coursera/Instagram inspired */
+    /* Clean White Palette - Spotify inspired */
     --background: 0 0% 98%;
-    --foreground: 0 0% 15%;
+    --foreground: 0 0% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 15%;
+    --card-foreground: 0 0% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 15%;
+    --popover-foreground: 0 0% 10%;
 
-    /* Instagram coral/orange primary */
-    --primary: 16 100% 66%;
+    /* Spotify-style red primary */
+    --primary: 355 85% 55%;
     --primary-foreground: 0 0% 98%;
 
-    /* Warm grey secondary */
-    --secondary: 220 13% 91%;
-    --secondary-foreground: 0 0% 15%;
+    /* Clean light secondary */
+    --secondary: 210 25% 95%;
+    --secondary-foreground: 0 0% 10%;
 
-    --muted: 220 13% 91%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 210 25% 95%;
+    --muted-foreground: 0 0% 40%;
 
-    /* Instagram purple-pink accent */
-    --accent: 310 50% 70%;
+    /* Spotify-style blue accent */
+    --accent: 220 90% 60%;
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 16 100% 66%;
+    --border: 210 25% 90%;
+    --input: 210 25% 95%;
+    --ring: 355 85% 55%;
 
     --radius: 0.75rem;
 
@@ -52,20 +52,18 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 43 89% 65%;
 
-    /* Modern accent colors */
-    --instagram-orange: 16 100% 66%;
-    --instagram-purple: 310 50% 70%;
-    --instagram-pink: 340 75% 68%;
-    --warm-grey: 220 13% 91%;
-    --soft-shadow: 220 13% 85%;
-    --coursera-blue: 210 100% 56%;
-    --soundcloud-orange: 16 100% 50%;
+    /* Spotify-inspired gradients */
+    --spotify-red: 355 85% 55%;
+    --spotify-blue: 220 90% 60%;
+    --spotify-purple: 270 85% 65%;
+    --clean-white: 0 0% 100%;
+    --soft-grey: 210 25% 95%;
     
-    /* Modern gradients */
-    --gradient-instagram: linear-gradient(135deg, hsl(16, 100%, 66%), hsl(310, 50%, 70%));
-    --gradient-soft: linear-gradient(135deg, hsl(0, 0%, 100%), hsl(220, 13%, 91%));
-    --gradient-purple-pink: linear-gradient(135deg, hsl(310, 50%, 70%), hsl(340, 75%, 68%));
-    --gradient-warm: linear-gradient(135deg, hsl(16, 100%, 66%), hsl(340, 75%, 68%));
+    /* Spotify-style gradients */
+    --gradient-spotify-primary: linear-gradient(135deg, hsl(355, 85%, 55%), hsl(270, 85%, 65%));
+    --gradient-spotify-secondary: linear-gradient(135deg, hsl(220, 90%, 60%), hsl(270, 85%, 65%));
+    --gradient-red-blue: linear-gradient(135deg, hsl(355, 85%, 55%), hsl(220, 90%, 60%));
+    --gradient-clean: linear-gradient(135deg, hsl(0, 0%, 100%), hsl(210, 25%, 95%));
     
     /* Glow effects */
     --glow-gold: 0 0 20px hsl(43, 89%, 65%, 0.5);

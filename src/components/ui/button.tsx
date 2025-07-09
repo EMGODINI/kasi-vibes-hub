@@ -9,14 +9,14 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md hover:shadow-lg animate-shimmer-gold",
+        default: "bg-gradient-to-r from-primary to-accent text-primary-foreground hover:from-primary/90 hover:to-accent/90 shadow-md hover:shadow-lg",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-md hover:shadow-lg",
         outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm hover:shadow-md",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm hover:shadow-md",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        kasi: "kasi-button text-primary-foreground hover:scale-105 active:scale-95",
-        party: "bg-gradient-to-r from-accent via-primary to-neon-pink text-primary-foreground party-glass animate-party-pulse",
+        gradient: "bg-gradient-to-r from-red-500 to-blue-500 text-white hover:from-red-600 hover:to-blue-600 shadow-lg hover:shadow-xl",
+        spotify: "bg-gradient-to-r from-primary via-accent to-primary text-primary-foreground hover:scale-105 shadow-lg hover:shadow-xl",
       },
       size: {
         default: "h-10 px-4 py-2",
