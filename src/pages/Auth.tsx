@@ -87,7 +87,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-background via-accent/10 to-background relative overflow-hidden">
       <FloatingIcons />
       <WelcomeAudio shouldPlay={showWelcomeAudio} onComplete={() => setShowWelcomeAudio(false)} />
       
@@ -95,35 +95,35 @@ const Auth = () => {
         <div className="w-full max-w-md">
           {/* Logo and Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-orange-600 to-orange-400 rounded-3xl shadow-2xl mb-6 animate-pulse">
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-accent to-primary rounded-3xl shadow-2xl mb-6 animate-pulse">
               <span className="text-3xl font-bold text-white font-orbitron">3MG</span>
             </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent font-orbitron mb-4">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent font-orbitron mb-4">
               3MGODINI
             </h1>
-            <p className="text-gray-300 text-lg font-inter">
+            <p className="text-muted-foreground text-lg font-inter">
               Thatha Lento to join the kasi movement
             </p>
           </div>
 
-          <Card className="backdrop-blur-md bg-gray-900/70 border border-orange-500/30 shadow-2xl">
+          <Card className="backdrop-blur-md bg-card/90 border border-accent/30 shadow-2xl">
             <CardHeader>
-              <CardTitle className="text-center text-white font-montserrat">Join the Culture</CardTitle>
-              <CardDescription className="text-center text-gray-400">
+              <CardTitle className="text-center text-foreground font-montserrat">Join the Culture</CardTitle>
+              <CardDescription className="text-center text-muted-foreground">
                 Connect with your kasi, share your vibe
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="login" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-6 bg-gray-800">
-                  <TabsTrigger value="login" className="text-white data-[state=active]:bg-orange-600">Sign In</TabsTrigger>
-                  <TabsTrigger value="register" className="text-white data-[state=active]:bg-orange-600">Thatha Lento!</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 mb-6 bg-accent/20">
+                  <TabsTrigger value="login" className="text-foreground data-[state=active]:bg-accent data-[state=active]:text-white">Sign In</TabsTrigger>
+                  <TabsTrigger value="register" className="text-foreground data-[state=active]:bg-accent data-[state=active]:text-white">Thatha Lento!</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="login">
                   <form onSubmit={handleLogin} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="login-email" className="text-white">Email</Label>
+                      <Label htmlFor="login-email" className="text-foreground">Email</Label>
                       <Input 
                         id="login-email" 
                         type="email" 
@@ -131,12 +131,12 @@ const Auth = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        className="bg-gray-800 border-orange-500/50 text-white placeholder:text-gray-400 focus:border-orange-500"
+                        className="bg-accent/10 border-accent/50 text-foreground placeholder:text-muted-foreground focus:border-accent"
                       />
-                      {errors.email && <p className="text-red-400 text-sm">{errors.email}</p>}
+                      {errors.email && <p className="text-destructive text-sm">{errors.email}</p>}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="login-password" className="text-white">Password</Label>
+                      <Label htmlFor="login-password" className="text-foreground">Password</Label>
                       <div className="relative">
                         <Input 
                           id="login-password" 
@@ -145,23 +145,23 @@ const Auth = () => {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           required
-                          className="bg-gray-800 border-orange-500/50 text-white placeholder:text-gray-400 focus:border-orange-500 pr-10"
+                          className="bg-accent/10 border-accent/50 text-foreground placeholder:text-muted-foreground focus:border-accent pr-10"
                         />
                         <Button
                           type="button"
                           variant="ghost"
                           size="sm"
-                          className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
+                          className="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:text-foreground"
                           onClick={() => setShowPassword(!showPassword)}
                         >
                           {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </Button>
                       </div>
-                      {errors.password && <p className="text-red-400 text-sm">{errors.password}</p>}
+                      {errors.password && <p className="text-destructive text-sm">{errors.password}</p>}
                     </div>
                     <Button 
                       type="submit" 
-                      className="w-full bg-gradient-to-r from-orange-600 to-orange-400 hover:from-orange-700 hover:to-orange-500 text-white font-semibold py-3 text-lg rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 hover:scale-105"
+                      className="w-full bg-gradient-to-r from-accent to-primary text-white font-semibold py-3 text-lg rounded-xl shadow-lg hover:opacity-90 transition-all duration-300 hover:scale-105"
                       disabled={isLoading}
                     >
                       {isLoading ? 'Signing In...' : 'Sign In'}
@@ -172,7 +172,7 @@ const Auth = () => {
                 <TabsContent value="register">
                   <form onSubmit={handleRegister} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="register-username" className="text-white">Username</Label>
+                      <Label htmlFor="register-username" className="text-foreground">Username</Label>
                       <Input 
                         id="register-username" 
                         type="text" 
@@ -180,12 +180,12 @@ const Auth = () => {
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         required
-                        className="bg-gray-800 border-orange-500/50 text-white placeholder:text-gray-400 focus:border-orange-500"
+                        className="bg-accent/10 border-accent/50 text-foreground placeholder:text-muted-foreground focus:border-accent"
                       />
-                      {errors.username && <p className="text-red-400 text-sm">{errors.username}</p>}
+                      {errors.username && <p className="text-destructive text-sm">{errors.username}</p>}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="register-email" className="text-white">Email</Label>
+                      <Label htmlFor="register-email" className="text-foreground">Email</Label>
                       <Input 
                         id="register-email" 
                         type="email" 
@@ -193,12 +193,12 @@ const Auth = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        className="bg-gray-800 border-orange-500/50 text-white placeholder:text-gray-400 focus:border-orange-500"
+                        className="bg-accent/10 border-accent/50 text-foreground placeholder:text-muted-foreground focus:border-accent"
                       />
-                      {errors.email && <p className="text-red-400 text-sm">{errors.email}</p>}
+                      {errors.email && <p className="text-destructive text-sm">{errors.email}</p>}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="register-password" className="text-white">Password</Label>
+                      <Label htmlFor="register-password" className="text-foreground">Password</Label>
                       <div className="relative">
                         <Input 
                           id="register-password" 
@@ -207,22 +207,22 @@ const Auth = () => {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           required
-                          className="bg-gray-800 border-orange-500/50 text-white placeholder:text-gray-400 focus:border-orange-500 pr-10"
+                          className="bg-accent/10 border-accent/50 text-foreground placeholder:text-muted-foreground focus:border-accent pr-10"
                         />
                         <Button
                           type="button"
                           variant="ghost"
                           size="sm"
-                          className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
+                          className="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:text-foreground"
                           onClick={() => setShowPassword(!showPassword)}
                         >
                           {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </Button>
                       </div>
-                      {errors.password && <p className="text-red-400 text-sm">{errors.password}</p>}
+                      {errors.password && <p className="text-destructive text-sm">{errors.password}</p>}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="confirm-password" className="text-white">Confirm Password</Label>
+                      <Label htmlFor="confirm-password" className="text-foreground">Confirm Password</Label>
                       <div className="relative">
                         <Input 
                           id="confirm-password" 
@@ -231,26 +231,26 @@ const Auth = () => {
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
                           required
-                          className="bg-gray-800 border-orange-500/50 text-white placeholder:text-gray-400 focus:border-orange-500 pr-10"
+                          className="bg-accent/10 border-accent/50 text-foreground placeholder:text-muted-foreground focus:border-accent pr-10"
                         />
                         <Button
                           type="button"
                           variant="ghost"
                           size="sm"
-                          className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
+                          className="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:text-foreground"
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         >
                           {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </Button>
                       </div>
-                      {errors.confirmPassword && <p className="text-red-400 text-sm">{errors.confirmPassword}</p>}
+                      {errors.confirmPassword && <p className="text-destructive text-sm">{errors.confirmPassword}</p>}
                     </div>
                     
                     <PasswordStrengthIndicator password={password} />
                     
                     <Button 
                       type="submit" 
-                      className="w-full bg-gradient-to-r from-orange-600 to-orange-400 hover:from-orange-700 hover:to-orange-500 text-white font-semibold py-3 text-lg rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 hover:scale-105"
+                      className="w-full bg-gradient-to-r from-accent to-primary text-white font-semibold py-3 text-lg rounded-xl shadow-lg hover:opacity-90 transition-all duration-300 hover:scale-105"
                       disabled={isLoading}
                     >
                       {isLoading ? 'Creating Account...' : 'Thatha Lento!'}
@@ -265,7 +265,7 @@ const Auth = () => {
             <Button 
               variant="ghost" 
               onClick={() => navigate('/')}
-              className="text-gray-400 hover:text-orange-400"
+              className="text-muted-foreground hover:text-accent"
             >
               ← Back to Home
             </Button>

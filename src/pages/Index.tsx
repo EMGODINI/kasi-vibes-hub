@@ -78,7 +78,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary to-background relative">
+    <div className="light min-h-screen bg-gradient-to-br from-background via-secondary to-background relative">
       <WelcomeAudio shouldPlay={showWelcomeAudio} onComplete={() => setShowWelcomeAudio(false)} />
       
       <div className="relative z-10 min-h-screen">
