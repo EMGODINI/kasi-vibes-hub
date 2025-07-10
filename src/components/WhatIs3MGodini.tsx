@@ -34,7 +34,7 @@ const WhatIs3MGodini = () => {
           What's 3MGODINI?
         </CardTitle>
         <p className="text-muted-foreground">
-          Awe mfethu, here's what's hot in the streets 🔥
+          Awe mfwethu, here's what's hot in the streets 🔥
         </p>
       </CardHeader>
       <CardContent>

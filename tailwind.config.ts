@@ -66,9 +66,10 @@ export default {
         'warm-red': 'hsl(var(--warm-red))',
         'warm-blue': 'hsl(var(--warm-blue))',
         'warm-orange': 'hsl(var(--warm-orange))',
+        'vibrant-orange': 'hsl(15, 100%, 55%)',
         'gradient-red': 'hsl(0, 85%, 60%)',
         'gradient-blue': 'hsl(220, 85%, 55%)',
-        'gradient-orange': 'hsl(20, 100%, 60%)'
+        'gradient-orange': 'hsl(15, 100%, 55%)'
       },
 			borderRadius: {
 				lg: 'var(--radius)',

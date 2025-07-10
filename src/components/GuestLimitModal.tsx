@@ -34,7 +34,7 @@ const GuestLimitModal = ({ isOpen, onClose }: GuestLimitModalProps) => {
             
             <div>
               <h3 className="font-semibold text-foreground mb-2">
-                Awe mfethu! ✋🏾
+                Awe mfwethu! ✋🏾
               </h3>
               <p className="text-muted-foreground text-sm">
                 You've reached your browsing limit. Join our kasi community to explore unlimited content, connect with friends, and share your vibes!
