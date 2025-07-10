@@ -62,14 +62,13 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))'
         },
-        // Kasi-inspired colors
-        'neon-gold': 'hsl(var(--neon-gold))',
-        'electric-teal': 'hsl(var(--electric-teal))',
-        'deep-maroon': 'hsl(var(--deep-maroon))',
-        'charcoal-black': 'hsl(var(--charcoal-black))',
-        'neon-pink': 'hsl(var(--neon-pink))',
-        'township-orange': 'hsl(var(--township-orange))',
-        'street-purple': 'hsl(var(--street-purple))'
+        // Beautiful warm colors
+        'warm-red': 'hsl(var(--warm-red))',
+        'warm-blue': 'hsl(var(--warm-blue))',
+        'warm-orange': 'hsl(var(--warm-orange))',
+        'gradient-red': 'hsl(0, 85%, 60%)',
+        'gradient-blue': 'hsl(220, 85%, 55%)',
+        'gradient-orange': 'hsl(20, 100%, 60%)'
       },
 			borderRadius: {
 				lg: 'var(--radius)',

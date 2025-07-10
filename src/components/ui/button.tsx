@@ -9,14 +9,14 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-gradient-to-r from-primary to-accent text-primary-foreground hover:from-primary/90 hover:to-accent/90 shadow-md hover:shadow-lg",
+        default: "bg-gradient-to-r from-primary via-orange-500 to-accent text-primary-foreground hover:from-primary/90 hover:via-orange-600 hover:to-accent/90 shadow-md hover:shadow-lg",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-md hover:shadow-lg",
         outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm hover:shadow-md",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm hover:shadow-md",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        gradient: "bg-gradient-to-r from-red-500 to-blue-500 text-white hover:from-red-600 hover:to-blue-600 shadow-lg hover:shadow-xl",
-        spotify: "bg-gradient-to-r from-primary via-accent to-primary text-primary-foreground hover:scale-105 shadow-lg hover:shadow-xl",
+        gradient: "bg-gradient-to-r from-red-500 via-orange-500 to-blue-500 text-white hover:from-red-600 hover:via-orange-600 hover:to-blue-600 shadow-lg hover:shadow-xl",
+        warm: "bg-gradient-to-r from-red-500 to-orange-500 text-white hover:from-red-600 hover:to-orange-600 shadow-lg hover:shadow-xl",
       },
       size: {
         default: "h-10 px-4 py-2",
