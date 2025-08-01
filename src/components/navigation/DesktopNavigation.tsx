@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Car, Headphones, Radio, Users, Home } from 'lucide-react';
+import { Car, Headphones, Radio, Users, Home, Activity } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -59,6 +59,15 @@ const DesktopNavigation = () => {
         Home
       </Button>
 
+      <Button
+        variant="ghost"
+        size="sm"
+        className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
+        onClick={() => navigate('/skaters-street')}
+      >
+        <Activity className="w-4 h-4 mr-1" />
+        Skaters Street
+      </Button>
       
       {pages.map((page) => {
         const IconComponent = getIcon(page.name);

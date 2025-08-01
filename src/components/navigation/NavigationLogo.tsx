@@ -6,11 +6,11 @@ const NavigationLogo = () => {
 
   return (
     <div className="flex items-center space-x-3">
-      <div className="w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer" onClick={() => navigate('/dashboard')}>
+      <div className="w-10 h-8 flex items-center justify-center cursor-pointer" onClick={() => navigate('/dashboard')}>
         <img 
-          src="/lovable-uploads/924af0ae-dd6b-494b-a23c-37583952b3e8.png" 
-          alt="3MGODINI Logo" 
-          className="w-8 h-8 object-contain"
+          src="/3mg-logo.png" 
+          alt="3MG Logo" 
+          className="w-10 h-8 object-contain"
         />
       </div>
       <span 
