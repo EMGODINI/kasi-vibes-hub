@@ -157,7 +157,7 @@ const Index = () => {
               <div className="max-w-sm mx-auto w-full">
                 <div className="text-center mb-8">
                   <img 
-                    src="/lovable-uploads/924af0ae-dd6b-494b-a23c-37583952b3e8.png" 
+                    src="/lovable-uploads/8fe769f4-bcea-4c20-ab31-dbe6174dc510.png" 
                     alt="3MGODINI Logo" 
                     className="w-24 h-24 mx-auto mb-4 rounded-2xl shadow-lg"
                   />

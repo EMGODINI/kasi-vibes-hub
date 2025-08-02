@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Activity, Users, Calendar, Trophy } from 'lucide-react';
+import { PagePlaylist } from '@/components/playlist/PagePlaylist';
 
 const SkatersStreet = () => {
   return (
@@ -113,6 +114,14 @@ const SkatersStreet = () => {
               </div>
             </Card>
           </div>
+        </div>
+
+        {/* Playlist Section */}
+        <div className="mt-16">
+          <h2 className="text-3xl font-bold text-center mb-12 bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+            Skaters Street Beats
+          </h2>
+          <PagePlaylist pageSlug="skaters-street" className="max-w-2xl mx-auto" />
         </div>
       </div>
     </div>

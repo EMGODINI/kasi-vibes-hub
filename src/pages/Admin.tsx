@@ -8,6 +8,7 @@ import AdminOverview from '@/components/admin/AdminOverview';
 import AdminContentReview from '@/components/admin/AdminContentReview';
 import AdminUserManagement from '@/components/admin/AdminUserManagement';
 import AdminSettings from '@/components/admin/AdminSettings';
+import { PlaylistManager } from '@/components/admin/PlaylistManager';
 import ProtectedRoute from '@/components/ProtectedRoute';
 
 const AdminContent = () => {
@@ -29,10 +30,11 @@ const AdminContent = () => {
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 md:grid-cols-7">
+          <TabsList className="grid w-full grid-cols-4 md:grid-cols-8">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="pages">Pages</TabsTrigger>
             <TabsTrigger value="tracks">Tracks</TabsTrigger>
+            <TabsTrigger value="playlists">Playlists</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="upload">Upload</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
@@ -49,6 +51,10 @@ const AdminContent = () => {
 
           <TabsContent value="tracks" className="space-y-6">
             <TrackManager />
+          </TabsContent>
+
+          <TabsContent value="playlists" className="space-y-6">
+            <PlaylistManager />
           </TabsContent>
 
           <TabsContent value="content" className="space-y-6">

@@ -10,6 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import Navigation from '@/components/Navigation';
 import UploadPostModal from '@/components/UploadPostModal';
 import ProfileModal from '@/components/ProfileModal';
+import { PagePlaylist } from '@/components/playlist/PagePlaylist';
 import { useToast } from '@/hooks/use-toast';
 
 const Stance = () => {
@@ -327,6 +328,17 @@ const Stance = () => {
                 </CardContent>
               </Card>
             ))}
+
+            {/* Playlist Section */}
+            <div className="mt-8">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-orange-500 to-orange-300 bg-clip-text text-transparent mb-2">
+                  Stance Sessions
+                </h2>
+                <p className="text-gray-400">Chill vibes for your stance sessions 🎵</p>
+              </div>
+              <PagePlaylist pageSlug="stance" className="max-w-2xl mx-auto" />
+            </div>
           </div>
         </div>
       </div>
