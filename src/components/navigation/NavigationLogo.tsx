@@ -8,7 +8,7 @@ const NavigationLogo = () => {
     <div className="flex items-center space-x-3">
       <div className="w-10 h-8 flex items-center justify-center cursor-pointer" onClick={() => navigate('/dashboard')}>
         <img 
-          src="/3mg-logo.png" 
+          src="/lovable-uploads/8fe769f4-bcea-4c20-ab31-dbe6174dc510.png" 
           alt="3MG Logo" 
           className="w-10 h-8 object-contain"
         />

@@ -1,21 +1,26 @@
+
 import Navigation from '@/components/Navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Activity, Users, Calendar, Trophy } from 'lucide-react';
-import skatersStreetBg from '@/assets/skaters-street-bg.jpg';
 
 const SkatersStreet = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       
-      {/* Hero Section with Montage Background */}
+      {/* Hero Section with Graffiti-Style 3MGODINI */}
       <div 
-        className="relative h-[70vh] bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${skatersStreetBg})` }}
+        className="relative h-[70vh] bg-gradient-to-br from-gray-900 via-gray-800 to-black overflow-hidden"
       >
-        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-black/40" />
+        {/* Graffiti-style 3MGODINI background */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-20">
+          <div className="text-[20rem] font-black text-orange-500 transform rotate-12 select-none">
+            3MGODINI
+          </div>
+        </div>
         <div className="relative z-10 container mx-auto px-4 h-full flex items-center justify-center">
           <div className="text-center text-white">
             <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent">
