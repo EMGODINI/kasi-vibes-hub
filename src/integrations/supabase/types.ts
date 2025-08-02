@@ -128,6 +128,45 @@ export type Database = {
         }
         Relationships: []
       }
+      page_playlists: {
+        Row: {
+          cover_image_url: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          is_active: boolean
+          order_index: number | null
+          page_slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          cover_image_url?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          order_index?: number | null
+          page_slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          cover_image_url?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          order_index?: number | null
+          page_slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       page_posts: {
         Row: {
           comments_count: number | null
@@ -243,6 +282,59 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      playlist_tracks: {
+        Row: {
+          artist: string
+          audio_url: string
+          cover_image_url: string | null
+          created_at: string
+          created_by: string
+          duration_seconds: number | null
+          id: string
+          is_active: boolean
+          order_index: number | null
+          playlist_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          artist: string
+          audio_url: string
+          cover_image_url?: string | null
+          created_at?: string
+          created_by: string
+          duration_seconds?: number | null
+          id?: string
+          is_active?: boolean
+          order_index?: number | null
+          playlist_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          artist?: string
+          audio_url?: string
+          cover_image_url?: string | null
+          created_at?: string
+          created_by?: string
+          duration_seconds?: number | null
+          id?: string
+          is_active?: boolean
+          order_index?: number | null
+          playlist_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "playlist_tracks_playlist_id_fkey"
+            columns: ["playlist_id"]
+            isOneToOne: false
+            referencedRelation: "page_playlists"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       post_comments: {
         Row: {
