@@ -137,7 +137,7 @@ const Index = () => {
                   Welcome to 3MGODINI
                 </h1>
                 <p className="text-xl text-muted-foreground font-inter mb-6 max-w-3xl mx-auto">
-                  Awe mfwethu! Welcome to the ultimate kasi social hub. Share your stance, drop your beats, and connect with the culture 🔥
+                  Awe mfwethu! Welcome to the Digital Soup. Share your stance, drop your beats, and connect with the culture 🔥
                 </p>
               </div>
               
