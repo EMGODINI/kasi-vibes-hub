@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Activity, Users, Calendar, Trophy } from 'lucide-react';
 import { PagePlaylist } from '@/components/playlist/PagePlaylist';
+import SkatersFeed from '@/components/skaters/SkatersFeed';
 
 const SkatersStreet = () => {
   return (
@@ -85,35 +86,12 @@ const SkatersStreet = () => {
           </Card>
         </div>
 
-        {/* Featured Content */}
+        {/* Community Feed */}
         <div className="mt-16">
           <h2 className="text-3xl font-bold text-center mb-12 bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
             Latest from the Streets
           </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <Card className="overflow-hidden">
-              <div className="h-48 bg-gradient-to-br from-orange-200 to-red-200" />
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">Street Style Sessions</h3>
-                <p className="text-muted-foreground mb-4">
-                  Discover the latest tricks and techniques from our community's top skaters
-                </p>
-                <Button variant="outline">Learn More</Button>
-              </div>
-            </Card>
-
-            <Card className="overflow-hidden">
-              <div className="h-48 bg-gradient-to-br from-blue-200 to-purple-200" />
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">Gear Reviews</h3>
-                <p className="text-muted-foreground mb-4">
-                  Check out reviews of the latest boards, wheels, and street wear
-                </p>
-                <Button variant="outline">Read Reviews</Button>
-              </div>
-            </Card>
-          </div>
+          <SkatersFeed />
         </div>
 
         {/* Playlist Section */}
