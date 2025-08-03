@@ -19,9 +19,29 @@ export default function ReelUploadModal({ open, onClose, onUploaded }: ReelUploa
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
 
+  const validateVideo = (file: File): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      video.onloadedmetadata = () => {
+        window.URL.revokeObjectURL(video.src);
+        resolve(video.duration <= 15);
+      };
+      video.onerror = () => resolve(false);
+      video.src = URL.createObjectURL(file);
+    });
+  };
+
   const handleUpload = async () => {
     if (!video || !caption) {
       setError('Video and caption are required.');
+      return;
+    }
+
+    // Validate video duration
+    const isValidDuration = await validateVideo(video);
+    if (!isValidDuration) {
+      setError('Video must be 15 seconds or less for KASI FLIX.');
       return;
     }
     setUploading(true);
@@ -75,15 +95,20 @@ export default function ReelUploadModal({ open, onClose, onUploaded }: ReelUploa
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Upload New Reel</DialogTitle>
+          <DialogTitle>Upload to KASI FLIX</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col space-y-4">
-          <Input
-            type="file"
-            accept="video/*"
-            onChange={e => setVideo(e.target.files?.[0] || null)}
-            disabled={uploading}
-          />
+          <div>
+            <label className="text-sm font-medium mb-2 block">
+              Dance Video or Movie Clip (Max 15 seconds)
+            </label>
+            <Input
+              type="file"
+              accept="video/*"
+              onChange={e => setVideo(e.target.files?.[0] || null)}
+              disabled={uploading}
+            />
+          </div>
           <Input
             type="file"
             accept="image/*"
@@ -93,7 +118,7 @@ export default function ReelUploadModal({ open, onClose, onUploaded }: ReelUploa
           />
           <Input
             type="text"
-            placeholder="Caption"
+            placeholder="Caption (describe your dance or movie scene)"
             value={caption}
             onChange={e => setCaption(e.target.value)}
             disabled={uploading}

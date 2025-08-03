@@ -37,7 +37,7 @@ const ReelsContent = () => {
         avatar: '/placeholder.svg',
         video_url: '/sample-reel1.mp4',
         thumbnail: 'https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=400',
-        caption: 'New dance challenge! Can you keep up? 💃🕺 #KasiDance #Challenge',
+        caption: 'New dance challenge! Can you keep up? 💃🕺 #KasiDance #KasiFlixChallenge',
         likes: 1250,
         comments: 89,
         shares: 45,
@@ -50,7 +50,7 @@ const ReelsContent = () => {
         avatar: '/placeholder.svg',
         video_url: '/sample-reel2.mp4',
         thumbnail: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=400',
-        caption: 'Low and slow, just how we like it 🚗✨ #Stance #CarLife',
+        caption: 'Movie scene recreation 🎬✨ #KasiFlix #MovieClip',
         likes: 890,
         comments: 34,
         shares: 28,
@@ -63,7 +63,7 @@ const ReelsContent = () => {
         avatar: '/placeholder.svg',
         video_url: '/sample-reel3.mp4',
         thumbnail: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400',
-        caption: 'Creating fire beats in the studio 🔥🎵 #BeatMaking #Music',
+        caption: 'Amapiano dance challenge 🔥💃 #KasiFlix #AmapianoDance',
         likes: 2100,
         comments: 156,
         shares: 78,
@@ -99,8 +99,8 @@ const ReelsContent = () => {
       
       <div className="container mx-auto px-4 py-6 pb-20">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-white mb-2">Reels</h1>
-          <p className="text-gray-400">Short videos from your community</p>
+          <h1 className="text-3xl font-bold text-white mb-2">KASI FLIX</h1>
+          <p className="text-gray-400">Share your dance moves & movie clips - 15 seconds max</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -197,9 +197,9 @@ const ReelsContent = () => {
 
         {reels.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-400 mb-4">No reels available yet.</p>
+            <p className="text-gray-400 mb-4">No videos available yet.</p>
             <Button className="bg-orange-600 hover:bg-orange-700">
-              Create Your First Reel
+              Upload Your First Dance or Movie Clip
             </Button>
           </div>
         )}
