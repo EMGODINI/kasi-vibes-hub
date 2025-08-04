@@ -1,27 +1,15 @@
 
-import { useState } from 'react';
+import { ContentUploadModal } from './admin/ContentUploadModal';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Upload, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Trash2, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/hooks/useAuth';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const ContentUpload = () => {
   const { toast } = useToast();
-  const { user } = useAuth();
   const queryClient = useQueryClient();
-  const [isUploading, setIsUploading] = useState(false);
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    content_type: 'general' as 'hero_image' | 'profile_image' | 'background_image' | 'general'
-  });
 
   // Fetch existing content
   const { data: content = [], isLoading } = useQuery({
@@ -37,90 +25,8 @@ const ContentUpload = () => {
     }
   });
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user) return;
-
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      toast({
-        title: "Invalid file type",
-        description: "Please select an image file.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    // Validate file size (10MB limit)
-    if (file.size > 10 * 1024 * 1024) {
-      toast({
-        title: "File too large",
-        description: "Please select a file smaller than 10MB.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (!formData.title.trim()) {
-      toast({
-        title: "Title required",
-        description: "Please enter a title for the content.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setIsUploading(true);
-    try {
-      // Upload file to Supabase Storage
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${formData.content_type}/${Date.now()}.${fileExt}`;
-      
-      const { error: uploadError } = await supabase.storage
-        .from('content')
-        .upload(fileName, file);
-
-      if (uploadError) throw uploadError;
-
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('content')
-        .getPublicUrl(fileName);
-
-      // Save content record to database
-      const { error: dbError } = await supabase
-        .from('content')
-        .insert({
-          title: formData.title,
-          description: formData.description,
-          image_url: publicUrl,
-          content_type: formData.content_type,
-          created_by: user.id
-        });
-
-      if (dbError) throw dbError;
-
-      // Reset form
-      setFormData({ title: '', description: '', content_type: 'general' });
-      (e.target as HTMLInputElement).value = '';
-      
-      // Refresh content list
-      queryClient.invalidateQueries({ queryKey: ['admin-content'] });
-
-      toast({
-        title: "Content uploaded successfully!",
-        description: "The content is now available across the app.",
-      });
-    } catch (error: any) {
-      console.error('Content upload error:', error);
-      toast({
-        title: "Upload failed",
-        description: error.message || "Failed to upload content. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsUploading(false);
-    }
+  const refreshContent = () => {
+    queryClient.invalidateQueries({ queryKey: ['admin-content'] });
   };
 
   const toggleContentStatus = async (contentId: string, currentStatus: boolean) => {
@@ -184,73 +90,20 @@ const ContentUpload = () => {
 
   return (
     <div className="space-y-6">
-      {/* Upload Form */}
-      <Card className="bg-white/50 backdrop-blur-sm border-0">
+      {/* Enhanced Upload Interface */}
+      <Card className="bg-gradient-to-r from-primary/5 to-accent/5 backdrop-blur-sm border border-primary/20">
         <CardHeader>
-          <CardTitle>Upload Content</CardTitle>
-          <CardDescription>Upload images and content to use across the platform</CardDescription>
+          <CardTitle className="flex items-center justify-between">
+            <span>Content Management</span>
+            <ContentUploadModal 
+              onContentUploaded={refreshContent}
+              triggerText="Upload New Content"
+            />
+          </CardTitle>
+          <CardDescription>
+            Upload and manage content across all app pages with drag-and-drop uploads
+          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                placeholder="Enter content title"
-                className="border-orange-200 focus:border-orange-500"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="content-type">Content Type</Label>
-              <Select
-                value={formData.content_type}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, content_type: value as any }))}
-              >
-                <SelectTrigger className="border-orange-200 focus:border-orange-500">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="general">General</SelectItem>
-                  <SelectItem value="hero_image">Hero Image</SelectItem>
-                  <SelectItem value="profile_image">Profile Image</SelectItem>
-                  <SelectItem value="background_image">Background Image</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="description">Description (Optional)</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="Enter content description"
-              className="border-orange-200 focus:border-orange-500"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="file-upload">Upload Image</Label>
-            <Input
-              id="file-upload"
-              type="file"
-              accept="image/*"
-              onChange={handleFileUpload}
-              disabled={isUploading}
-              className="border-orange-200 focus:border-orange-500"
-            />
-          </div>
-          
-          {isUploading && (
-            <div className="flex items-center space-x-2 text-orange-600">
-              <Upload className="w-4 h-4 animate-pulse" />
-              <span>Uploading...</span>
-            </div>
-          )}
-        </CardContent>
       </Card>
 
       {/* Content List */}

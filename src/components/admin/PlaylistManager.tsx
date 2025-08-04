@@ -7,6 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Progress } from '@/components/ui/progress';
+import { FileUpload } from '@/components/ui/file-upload';
 import { Trash2, Edit, Plus, Upload, Music } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -35,11 +37,19 @@ interface Playlist {
   tracks?: Track[];
 }
 
+interface AppPage {
+  slug: string;
+  name: string;
+  title: string;
+}
+
 export const PlaylistManager = () => {
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null);
   const [tracks, setTracks] = useState<Track[]>([]);
+  const [appPages, setAppPages] = useState<AppPage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [playlistForm, setPlaylistForm] = useState({
     page_slug: '',
     title: '',
@@ -57,12 +67,17 @@ export const PlaylistManager = () => {
   const [showTrackDialog, setShowTrackDialog] = useState(false);
   const [editingPlaylist, setEditingPlaylist] = useState<Playlist | null>(null);
   const [editingTrack, setEditingTrack] = useState<Track | null>(null);
+  const [playlistThumbnail, setPlaylistThumbnail] = useState<File | null>(null);
+  const [playlistThumbnailPreview, setPlaylistThumbnailPreview] = useState<string>('');
+  const [trackCover, setTrackCover] = useState<File | null>(null);
+  const [trackCoverPreview, setTrackCoverPreview] = useState<string>('');
   
   const { toast } = useToast();
   const { user } = useAuth();
 
   useEffect(() => {
     fetchPlaylists();
+    fetchAppPages();
   }, []);
 
   useEffect(() => {
@@ -91,6 +106,26 @@ export const PlaylistManager = () => {
     }
   };
 
+  const fetchAppPages = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('app_pages')
+        .select('slug, name, title')
+        .eq('is_active', true)
+        .order('order_index', { ascending: true });
+
+      if (error) throw error;
+      setAppPages(data || []);
+    } catch (error) {
+      console.error('Error fetching app pages:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load app pages",
+        variant: "destructive"
+      });
+    }
+  };
+
   const fetchTracks = async (playlistId: string) => {
     try {
       const { data, error } = await supabase
@@ -111,17 +146,49 @@ export const PlaylistManager = () => {
     }
   };
 
+  const uploadFile = async (file: File, bucket: string, path: string) => {
+    const { error: uploadError } = await supabase.storage
+      .from(bucket)
+      .upload(path, file);
+
+    if (uploadError) throw uploadError;
+
+    const { data: { publicUrl } } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(path);
+
+    return publicUrl;
+  };
+
   const handlePlaylistSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
 
     setIsLoading(true);
+    setUploadProgress(0);
+    
     try {
+      let cover_image_url = playlistForm.cover_image_url;
+
+      // Upload thumbnail if provided
+      if (playlistThumbnail) {
+        setUploadProgress(30);
+        const fileExt = playlistThumbnail.name.split('.').pop();
+        const fileName = `playlists/${Date.now()}.${fileExt}`;
+        cover_image_url = await uploadFile(playlistThumbnail, 'page-assets', fileName);
+        setUploadProgress(60);
+      }
+
+      const playlistData = {
+        ...playlistForm,
+        cover_image_url
+      };
+
       if (editingPlaylist) {
         const { error } = await supabase
           .from('page_playlists')
           .update({
-            ...playlistForm,
+            ...playlistData,
             updated_at: new Date().toISOString()
           })
           .eq('id', editingPlaylist.id);
@@ -132,7 +199,7 @@ export const PlaylistManager = () => {
         const { error } = await supabase
           .from('page_playlists')
           .insert({
-            ...playlistForm,
+            ...playlistData,
             created_by: user.id,
             order_index: playlists.length
           });
@@ -141,8 +208,8 @@ export const PlaylistManager = () => {
         toast({ title: "Success", description: "Playlist created successfully" });
       }
 
-      setPlaylistForm({ page_slug: '', title: '', description: '', cover_image_url: '' });
-      setEditingPlaylist(null);
+      setUploadProgress(100);
+      resetPlaylistForm();
       setShowPlaylistDialog(false);
       fetchPlaylists();
     } catch (error) {
@@ -154,7 +221,15 @@ export const PlaylistManager = () => {
       });
     } finally {
       setIsLoading(false);
+      setUploadProgress(0);
     }
+  };
+
+  const resetPlaylistForm = () => {
+    setPlaylistForm({ page_slug: '', title: '', description: '', cover_image_url: '' });
+    setEditingPlaylist(null);
+    setPlaylistThumbnail(null);
+    setPlaylistThumbnailPreview('');
   };
 
   const handleTrackSubmit = async (e: React.FormEvent) => {
@@ -162,12 +237,30 @@ export const PlaylistManager = () => {
     if (!user || !selectedPlaylist) return;
 
     setIsLoading(true);
+    setUploadProgress(0);
+    
     try {
+      let cover_image_url = trackForm.cover_image_url;
+
+      // Upload cover image if provided
+      if (trackCover) {
+        setUploadProgress(30);
+        const fileExt = trackCover.name.split('.').pop();
+        const fileName = `tracks/${Date.now()}.${fileExt}`;
+        cover_image_url = await uploadFile(trackCover, 'page-assets', fileName);
+        setUploadProgress(60);
+      }
+
+      const trackData = {
+        ...trackForm,
+        cover_image_url
+      };
+
       if (editingTrack) {
         const { error } = await supabase
           .from('playlist_tracks')
           .update({
-            ...trackForm,
+            ...trackData,
             updated_at: new Date().toISOString()
           })
           .eq('id', editingTrack.id);
@@ -178,7 +271,7 @@ export const PlaylistManager = () => {
         const { error } = await supabase
           .from('playlist_tracks')
           .insert({
-            ...trackForm,
+            ...trackData,
             playlist_id: selectedPlaylist.id,
             created_by: user.id,
             order_index: tracks.length
@@ -188,8 +281,8 @@ export const PlaylistManager = () => {
         toast({ title: "Success", description: "Track added successfully" });
       }
 
-      setTrackForm({ title: '', artist: '', audio_url: '', cover_image_url: '', duration_seconds: 0 });
-      setEditingTrack(null);
+      setUploadProgress(100);
+      resetTrackForm();
       setShowTrackDialog(false);
       fetchTracks(selectedPlaylist.id);
     } catch (error) {
@@ -201,7 +294,15 @@ export const PlaylistManager = () => {
       });
     } finally {
       setIsLoading(false);
+      setUploadProgress(0);
     }
+  };
+
+  const resetTrackForm = () => {
+    setTrackForm({ title: '', artist: '', audio_url: '', cover_image_url: '', duration_seconds: 0 });
+    setEditingTrack(null);
+    setTrackCover(null);
+    setTrackCoverPreview('');
   };
 
   const deletePlaylist = async (playlist: Playlist) => {
@@ -264,6 +365,7 @@ export const PlaylistManager = () => {
       description: playlist.description || '',
       cover_image_url: playlist.cover_image_url || ''
     });
+    setPlaylistThumbnailPreview(playlist.cover_image_url || '');
     setShowPlaylistDialog(true);
   };
 
@@ -276,7 +378,32 @@ export const PlaylistManager = () => {
       cover_image_url: track.cover_image_url || '',
       duration_seconds: track.duration_seconds || 0
     });
+    setTrackCoverPreview(track.cover_image_url || '');
     setShowTrackDialog(true);
+  };
+
+  const handlePlaylistThumbnailSelect = (file: File) => {
+    setPlaylistThumbnail(file);
+    const reader = new FileReader();
+    reader.onload = () => setPlaylistThumbnailPreview(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const handlePlaylistThumbnailRemove = () => {
+    setPlaylistThumbnail(null);
+    setPlaylistThumbnailPreview('');
+  };
+
+  const handleTrackCoverSelect = (file: File) => {
+    setTrackCover(file);
+    const reader = new FileReader();
+    reader.onload = () => setTrackCoverPreview(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const handleTrackCoverRemove = () => {
+    setTrackCover(null);
+    setTrackCoverPreview('');
   };
 
   return (
@@ -287,8 +414,7 @@ export const PlaylistManager = () => {
           <DialogTrigger asChild>
             <Button 
               onClick={() => {
-                setEditingPlaylist(null);
-                setPlaylistForm({ page_slug: '', title: '', description: '', cover_image_url: '' });
+                resetPlaylistForm();
               }}
               className="bg-primary hover:bg-primary/90"
             >
@@ -302,30 +428,34 @@ export const PlaylistManager = () => {
                 {editingPlaylist ? 'Edit Playlist' : 'Create New Playlist'}
               </DialogTitle>
             </DialogHeader>
-            <form onSubmit={handlePlaylistSubmit} className="space-y-4">
+            <form onSubmit={handlePlaylistSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="page_slug">Page</Label>
+                <Label htmlFor="page_slug">Create Playlist For:</Label>
                 <Select 
                   value={playlistForm.page_slug} 
                   onValueChange={(value) => setPlaylistForm({...playlistForm, page_slug: value})}
+                  required
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a page" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="skaters-street">Skaters Street</SelectItem>
-                    <SelectItem value="stance">Stance (Weed Page)</SelectItem>
+                    {appPages.map((page) => (
+                      <SelectItem key={page.slug} value={page.slug}>
+                        {page.title || page.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="title">Title</Label>
+                <Label htmlFor="title">Playlist Title</Label>
                 <Input
                   id="title"
                   value={playlistForm.title}
                   onChange={(e) => setPlaylistForm({...playlistForm, title: e.target.value})}
-                  placeholder="Playlist title"
+                  placeholder="Enter playlist title"
                   required
                 />
               </div>
@@ -336,19 +466,30 @@ export const PlaylistManager = () => {
                   id="description"
                   value={playlistForm.description}
                   onChange={(e) => setPlaylistForm({...playlistForm, description: e.target.value})}
-                  placeholder="Playlist description"
+                  placeholder="Enter playlist description"
+                  rows={3}
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="cover_image_url">Cover Image URL</Label>
-                <Input
-                  id="cover_image_url"
-                  value={playlistForm.cover_image_url}
-                  onChange={(e) => setPlaylistForm({...playlistForm, cover_image_url: e.target.value})}
-                  placeholder="https://example.com/image.jpg"
+                <Label>Playlist Thumbnail (16:9)</Label>
+                <FileUpload
+                  onFileSelect={handlePlaylistThumbnailSelect}
+                  onFileRemove={handlePlaylistThumbnailRemove}
+                  accept="image/*"
+                  maxSize={5}
+                  preview={playlistThumbnailPreview}
+                  dragText="Drop your playlist thumbnail here"
+                  buttonText="Select Thumbnail"
                 />
               </div>
+
+              {isLoading && uploadProgress > 0 && (
+                <div className="space-y-2">
+                  <Label>Upload Progress</Label>
+                  <Progress value={uploadProgress} className="w-full" />
+                </div>
+              )}
               
               <Button type="submit" disabled={isLoading} className="w-full">
                 {isLoading ? 'Saving...' : editingPlaylist ? 'Update Playlist' : 'Create Playlist'}
@@ -433,8 +574,7 @@ export const PlaylistManager = () => {
                     <Button
                       size="sm"
                       onClick={() => {
-                        setEditingTrack(null);
-                        setTrackForm({ title: '', artist: '', audio_url: '', cover_image_url: '', duration_seconds: 0 });
+                        resetTrackForm();
                       }}
                     >
                       <Plus className="h-4 w-4 mr-2" />
@@ -447,25 +587,25 @@ export const PlaylistManager = () => {
                         {editingTrack ? 'Edit Track' : 'Add New Track'}
                       </DialogTitle>
                     </DialogHeader>
-                    <form onSubmit={handleTrackSubmit} className="space-y-4">
+                    <form onSubmit={handleTrackSubmit} className="space-y-6">
                       <div className="space-y-2">
-                        <Label htmlFor="track_title">Title</Label>
+                        <Label htmlFor="track_title">Track Title</Label>
                         <Input
                           id="track_title"
                           value={trackForm.title}
                           onChange={(e) => setTrackForm({...trackForm, title: e.target.value})}
-                          placeholder="Track title"
+                          placeholder="Enter track title"
                           required
                         />
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="artist">Artist</Label>
+                        <Label htmlFor="artist">Artist Name</Label>
                         <Input
                           id="artist"
                           value={trackForm.artist}
                           onChange={(e) => setTrackForm({...trackForm, artist: e.target.value})}
-                          placeholder="Artist name"
+                          placeholder="Enter artist name"
                           required
                         />
                       </div>
@@ -476,18 +616,21 @@ export const PlaylistManager = () => {
                           id="audio_url"
                           value={trackForm.audio_url}
                           onChange={(e) => setTrackForm({...trackForm, audio_url: e.target.value})}
-                          placeholder="https://example.com/audio.mp3"
+                          placeholder="https://example.com/track.mp3"
                           required
                         />
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="track_cover_image_url">Cover Image URL</Label>
-                        <Input
-                          id="track_cover_image_url"
-                          value={trackForm.cover_image_url}
-                          onChange={(e) => setTrackForm({...trackForm, cover_image_url: e.target.value})}
-                          placeholder="https://example.com/cover.jpg"
+                        <Label>Track Cover Art</Label>
+                        <FileUpload
+                          onFileSelect={handleTrackCoverSelect}
+                          onFileRemove={handleTrackCoverRemove}
+                          accept="image/*"
+                          maxSize={5}
+                          preview={trackCoverPreview}
+                          dragText="Drop your track cover art here"
+                          buttonText="Select Cover Art"
                         />
                       </div>
                       
