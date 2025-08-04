@@ -8,10 +8,10 @@ import BottomNavigation from '@/components/navigation/BottomNavigation';
 const Navigation = () => {
   return (
     <>
-      {/* Top Navigation Bar */}
-      <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-lg border-b border-border shadow-sm">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16 relative">
+      {/* Floating Urban Navigation */}
+      <nav className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 urban-glass rounded-2xl shadow-neon">
+        <div className="px-6 py-3">
+          <div className="flex items-center justify-between space-x-8">
             <NavigationLogo />
             <DesktopNavigation />
             <div className="flex items-center space-x-2">

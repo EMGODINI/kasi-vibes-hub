@@ -48,24 +48,24 @@ const DesktopNavigation = () => {
   };
 
   return (
-    <div className="hidden lg:flex items-center space-x-1">
+    <div className="hidden lg:flex items-center space-x-2">
       <Button
         variant="ghost"
         size="sm"
-        className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
+        className="text-foreground/80 hover:text-neon-purple hover:bg-neon-purple/10 transition-all duration-300 hover:shadow-neon hover:scale-105 relative group"
         onClick={() => navigate('/dashboard')}
       >
-        <Home className="w-4 h-4 mr-1" />
+        <Home className="w-4 h-4 mr-1 group-hover:animate-pulse" />
         Home
       </Button>
 
       <Button
         variant="ghost"
         size="sm"
-        className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
+        className="text-foreground/80 hover:text-neon-cyan hover:bg-neon-cyan/10 transition-all duration-300 hover:shadow-glow hover:scale-105 relative group"
         onClick={() => navigate('/skaters-street')}
       >
-        <Activity className="w-4 h-4 mr-1" />
+        <Activity className="w-4 h-4 mr-1 group-hover:animate-pulse" />
         Skaters Street
       </Button>
       
@@ -76,10 +76,10 @@ const DesktopNavigation = () => {
             key={page.id}
             variant="ghost"
             size="sm"
-            className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
+            className="text-foreground/80 hover:text-electric-blue hover:bg-electric-blue/10 transition-all duration-300 hover:shadow-glow hover:scale-105 relative group"
             onClick={() => navigate(`/page/${page.slug}`)}
           >
-            <IconComponent className="w-4 h-4 mr-1" />
+            <IconComponent className="w-4 h-4 mr-1 group-hover:animate-pulse" />
             {page.title}
           </Button>
         );

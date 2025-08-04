@@ -62,10 +62,15 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))'
         },
-        // Beautiful warm colors
+        // Urban-Futurist color palette
         'warm-red': 'hsl(var(--warm-red))',
         'warm-blue': 'hsl(var(--warm-blue))',
         'warm-orange': 'hsl(var(--warm-orange))',
+        'neon-purple': 'hsl(var(--neon-purple))',
+        'neon-cyan': 'hsl(var(--neon-cyan))',
+        'neon-pink': 'hsl(var(--neon-pink))',
+        'electric-blue': 'hsl(var(--electric-blue))',
+        'urban-gold': 'hsl(var(--urban-gold))',
         'vibrant-orange': 'hsl(15, 100%, 55%)',
         'gradient-red': 'hsl(0, 85%, 60%)',
         'gradient-blue': 'hsl(220, 85%, 55%)',
