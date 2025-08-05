@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Navigation from '@/components/Navigation';
-import ContentUpload from '@/components/ContentUpload';
 import PageManager from '@/components/admin/PageManager';
 import TrackManager from '@/components/admin/TrackManager';
 import AdminAnalytics from '@/components/admin/AdminAnalytics';
