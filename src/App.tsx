@@ -19,7 +19,7 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import Stance from "./pages/Stance";
 import Reels from "./pages/Reels";
-import SkatersStreet from "./pages/SkatersStreet";
+import RollUp from "./pages/RollUp";
 
 import DynamicPage from "./pages/DynamicPage";
 import NotFound from "./pages/NotFound";
@@ -61,9 +61,9 @@ const App = () => (
                   <Reels />
                 </ProtectedRoute>
               } />
-              <Route path="/skaters-street" element={
+              <Route path="/roll-up" element={
                 <ProtectedRoute>
-                  <SkatersStreet />
+                  <RollUp />
                 </ProtectedRoute>
               } />
               <Route path="/private-rooms" element={

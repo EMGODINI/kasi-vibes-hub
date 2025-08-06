@@ -1,0 +1,126 @@
+
+import Navigation from '@/components/Navigation';
+import { Button } from '@/components/ui/button';
+import { Leaf, Sparkles, Music, Users } from 'lucide-react';
+import { PagePlaylist } from '@/components/playlist/PagePlaylist';
+import RollUpFloatingElements from '@/components/RollUpFloatingElements';
+import DailyStickyContent from '@/components/DailyStickyContent';
+import WhatYouRollin from '@/components/WhatYouRollin';
+import BackgroundMusicPlayer from '@/components/BackgroundMusicPlayer';
+import UserPointsDisplay from '@/components/UserPointsDisplay';
+import { useAuth } from '@/hooks/useAuth';
+
+const RollUp = () => {
+  const { user } = useAuth();
+
+  return (
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      <Navigation />
+      <RollUpFloatingElements />
+      <BackgroundMusicPlayer />
+      
+      {/* Hero Section with Dreamy Fog */}
+      <div 
+        className="relative h-[70vh] overflow-hidden"
+        style={{
+          background: 'var(--gradient-roll-up)',
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-roll-up-dream-fog/30 to-transparent" />
+        
+        {/* Graffiti-style 3MGODINI background */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-10">
+          <div className="text-[20rem] font-black text-roll-up-ultraviolet transform rotate-12 select-none">
+            3MGODINI
+          </div>
+        </div>
+        
+        <div className="relative z-10 container mx-auto px-4 h-full flex items-center justify-center">
+          <div className="text-center text-white">
+            <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-roll-up-neon-green to-roll-up-ultraviolet bg-clip-text text-transparent animate-cyber-glow">
+              Roll Up 🌿
+            </h1>
+            <p className="text-xl mb-8 text-roll-up-hazy-magenta">
+              Where the vibes meet the clouds - Join the ultimate chill community
+            </p>
+            <div className="flex gap-4 justify-center">
+              <Button className="bg-gradient-to-r from-roll-up-neon-green to-roll-up-ultraviolet hover:opacity-80 animate-roll-up-glow">
+                <Leaf className="mr-2 h-4 w-4" />
+                Light It Up
+              </Button>
+              <Button variant="outline" className="border-roll-up-ultraviolet text-roll-up-ultraviolet hover:bg-roll-up-ultraviolet/10">
+                <Sparkles className="mr-2 h-4 w-4" />
+                Enter the Zone
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-12 relative z-10">
+        
+        {/* User Points Display for authenticated users */}
+        {user && (
+          <div className="mb-8 flex justify-center">
+            <div className="w-full max-w-sm">
+              <UserPointsDisplay />
+            </div>
+          </div>
+        )}
+        
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Daily Sticky Content */}
+          <div className="lg:col-span-1">
+            <DailyStickyContent />
+          </div>
+          
+          {/* What You Rollin' Feed */}
+          <div className="lg:col-span-2">
+            <WhatYouRollin />
+          </div>
+        </div>
+
+        {/* Music Section */}
+        <div className="mt-16">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-roll-up-neon-green to-roll-up-ultraviolet bg-clip-text text-transparent">
+              High Tracks Only 🎵
+            </h2>
+            <p className="text-roll-up-hazy-magenta text-lg">
+              Curated beats for the perfect session
+            </p>
+          </div>
+          
+          <div className="glass-tile rounded-2xl p-8 max-w-4xl mx-auto">
+            <PagePlaylist pageSlug="roll-up" className="w-full" />
+          </div>
+        </div>
+
+        {/* Community Stats */}
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="glass-tile p-6 text-center animate-roll-up-glow">
+            <Users className="h-12 w-12 mx-auto mb-4 text-roll-up-neon-green" />
+            <h3 className="text-2xl font-bold text-roll-up-ultraviolet mb-2">3.2K+</h3>
+            <p className="text-roll-up-hazy-magenta">Rolling Together</p>
+          </div>
+          
+          <div className="glass-tile p-6 text-center animate-roll-up-glow">
+            <Leaf className="h-12 w-12 mx-auto mb-4 text-roll-up-ultraviolet" />
+            <h3 className="text-2xl font-bold text-roll-up-neon-green mb-2">15K+</h3>
+            <p className="text-roll-up-hazy-magenta">Sessions Shared</p>
+          </div>
+          
+          <div className="glass-tile p-6 text-center animate-roll-up-glow">
+            <Music className="h-12 w-12 mx-auto mb-4 text-roll-up-hazy-magenta" />
+            <h3 className="text-2xl font-bold text-roll-up-ultraviolet mb-2">500+</h3>
+            <p className="text-roll-up-hazy-magenta">Chill Playlists</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default RollUp;

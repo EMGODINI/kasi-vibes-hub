@@ -62,6 +62,13 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))'
         },
+        // Roll Up color palette
+        'roll-up-deep-purple': 'hsl(var(--roll-up-deep-purple))',
+        'roll-up-neon-green': 'hsl(var(--roll-up-neon-green))',
+        'roll-up-hazy-magenta': 'hsl(var(--roll-up-hazy-magenta))',
+        'roll-up-ultraviolet': 'hsl(var(--roll-up-ultraviolet))',
+        'roll-up-dream-fog': 'hsl(var(--roll-up-dream-fog))',
+        
         // Urban-Futurist color palette
         'warm-red': 'hsl(var(--warm-red))',
         'warm-blue': 'hsl(var(--warm-blue))',

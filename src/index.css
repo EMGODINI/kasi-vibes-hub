@@ -52,6 +52,13 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 0 85% 60%;
 
+    /* Roll Up Color Palette - Deep purples, neon greens, magentas */
+    --roll-up-deep-purple: 280 60% 25%;
+    --roll-up-neon-green: 120 100% 50%;
+    --roll-up-hazy-magenta: 320 80% 60%;
+    --roll-up-ultraviolet: 270 100% 80%;
+    --roll-up-dream-fog: 280 40% 15%;
+    
     /* Urban-Futurist Color Palette */
     --warm-red: 0 85% 60%;
     --warm-blue: 220 85% 55%;
@@ -69,6 +76,11 @@
     --glass-bg: 0 0% 100% / 0.08;
     --glass-bg-strong: 0 0% 100% / 0.15;
 
+    /* Roll Up Gradients */
+    --gradient-roll-up: linear-gradient(135deg, hsl(var(--roll-up-deep-purple) / 0.8), hsl(var(--roll-up-hazy-magenta) / 0.6));
+    --gradient-dreamy-fog: linear-gradient(180deg, hsl(var(--roll-up-dream-fog) / 0.2), hsl(var(--roll-up-deep-purple) / 0.1));
+    --gradient-neon-glow: linear-gradient(90deg, hsl(var(--roll-up-neon-green)), hsl(var(--roll-up-ultraviolet)));
+    
     /* Urban gradient murals */
     --gradient-urban: linear-gradient(135deg, hsl(280 100% 70% / 0.8), hsl(220 100% 65% / 0.8));
     --gradient-mural: linear-gradient(45deg, hsl(330 100% 70% / 0.6), hsl(280 100% 70% / 0.6), hsl(220 100% 65% / 0.6));
@@ -210,6 +222,15 @@
 
   .animate-hover-lift {
     animation: hoverLift 0.3s ease-out forwards;
+  }
+
+  /* Roll Up specific animations */
+  .animate-dreamy-float {
+    animation: dreamy-float 8s ease-in-out infinite;
+  }
+
+  .animate-roll-up-glow {
+    animation: roll-up-glow 3s ease-in-out infinite;
   }
 
   /* Urban-Futurist Glass Effects */
@@ -573,6 +594,39 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+/* Roll Up specific animations */
+@keyframes dreamy-float {
+  0% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+    opacity: 0.05;
+  }
+  25% {
+    transform: translateY(-40px) translateX(15px) rotate(90deg);
+    opacity: 0.15;
+  }
+  50% {
+    transform: translateY(-80px) translateX(-10px) rotate(180deg);
+    opacity: 0.1;
+  }
+  75% {
+    transform: translateY(-50px) translateX(25px) rotate(270deg);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateY(0px) translateX(0px) rotate(360deg);
+    opacity: 0.05;
+  }
+}
+
+@keyframes roll-up-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px hsl(var(--roll-up-neon-green) / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px hsl(var(--roll-up-ultraviolet) / 0.5);
   }
 }
 

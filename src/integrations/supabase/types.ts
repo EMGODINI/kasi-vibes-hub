@@ -104,6 +104,51 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_content: {
+        Row: {
+          content: string | null
+          content_type: string
+          created_at: string
+          created_by: string
+          display_date: string
+          external_url: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          content?: string | null
+          content_type: string
+          created_at?: string
+          created_by: string
+          display_date?: string
+          external_url?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          content?: string | null
+          content_type?: string
+          created_at?: string
+          created_by?: string
+          display_date?: string
+          external_url?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       dm_conversations: {
         Row: {
           created_at: string
@@ -452,6 +497,103 @@ export type Database = {
         }
         Relationships: []
       }
+      roll_up_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roll_up_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "roll_up_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roll_up_likes: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roll_up_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "roll_up_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roll_up_posts: {
+        Row: {
+          caption: string | null
+          comments_count: number | null
+          created_at: string
+          id: string
+          image_url: string
+          likes_count: number | null
+          updated_at: string
+          user_id: string
+          vibe_tags: string[] | null
+        }
+        Insert: {
+          caption?: string | null
+          comments_count?: number | null
+          created_at?: string
+          id?: string
+          image_url: string
+          likes_count?: number | null
+          updated_at?: string
+          user_id: string
+          vibe_tags?: string[] | null
+        }
+        Update: {
+          caption?: string | null
+          comments_count?: number | null
+          created_at?: string
+          id?: string
+          image_url?: string
+          likes_count?: number | null
+          updated_at?: string
+          user_id?: string
+          vibe_tags?: string[] | null
+        }
+        Relationships: []
+      }
       tracks: {
         Row: {
           artist: string
@@ -548,6 +690,36 @@ export type Database = {
           followed_id?: string
           follower_id?: string
           id?: string
+        }
+        Relationships: []
+      }
+      user_points: {
+        Row: {
+          badges: string[] | null
+          created_at: string
+          id: string
+          level_name: string | null
+          points: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          badges?: string[] | null
+          created_at?: string
+          id?: string
+          level_name?: string | null
+          points?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          badges?: string[] | null
+          created_at?: string
+          id?: string
+          level_name?: string | null
+          points?: number | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

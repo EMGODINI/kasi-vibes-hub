@@ -62,11 +62,11 @@ const DesktopNavigation = () => {
       <Button
         variant="ghost"
         size="sm"
-        className="text-foreground/80 hover:text-neon-cyan hover:bg-neon-cyan/10 transition-all duration-300 hover:shadow-glow hover:scale-105 relative group"
-        onClick={() => navigate('/skaters-street')}
+        className="text-foreground/80 hover:text-roll-up-neon-green hover:bg-roll-up-neon-green/10 transition-all duration-300 hover:shadow-glow hover:scale-105 relative group"
+        onClick={() => navigate('/roll-up')}
       >
         <Activity className="w-4 h-4 mr-1 group-hover:animate-pulse" />
-        Skaters Street
+        Roll Up 🌿
       </Button>
       
       {pages.map((page) => {
