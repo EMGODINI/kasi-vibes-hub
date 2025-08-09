@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Menu, X, Car, MessageCircle, Camera, Briefcase, Mic, Zap, Headphones, Radio, Home, Users, Shield } from 'lucide-react';
+import { Menu, X, Car, MessageCircle, Camera, Briefcase, Mic, Zap, Headphones, Radio, Home, Users, Shield, Activity } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -80,6 +80,19 @@ const MobileMenu = () => {
               >
                 <Home className="w-4 h-4 mr-2" />
                 Home
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                className="justify-start text-gray-300 hover:text-orange-400 hover:bg-orange-500/10"
+                onClick={() => {
+                  navigate('/skaters-street');
+                  setIsMenuOpen(false);
+                }}
+              >
+                <Activity className="w-4 h-4 mr-2" />
+                Skaters Street
               </Button>
               
               {pages.map((page) => {

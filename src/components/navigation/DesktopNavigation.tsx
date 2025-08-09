@@ -68,6 +68,16 @@ const DesktopNavigation = () => {
         <Activity className="w-4 h-4 mr-1 group-hover:animate-pulse" />
         Roll Up 🌿
       </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        className="text-foreground/80 hover:text-neon-pink hover:bg-neon-pink/10 transition-all duration-300 hover:shadow-glow hover:scale-105 relative group"
+        onClick={() => navigate('/skaters-street')}
+      >
+        <Activity className="w-4 h-4 mr-1 group-hover:animate-pulse" />
+        Skaters Street
+      </Button>
       
       {pages.map((page) => {
         const IconComponent = getIcon(page.name);

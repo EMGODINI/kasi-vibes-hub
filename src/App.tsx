@@ -20,7 +20,7 @@ import Settings from "./pages/Settings";
 import Stance from "./pages/Stance";
 import Reels from "./pages/Reels";
 import RollUp from "./pages/RollUp";
-
+import SkatersStreet from "./pages/SkatersStreet";
 import DynamicPage from "./pages/DynamicPage";
 import NotFound from "./pages/NotFound";
 
@@ -64,6 +64,11 @@ const App = () => (
               <Route path="/roll-up" element={
                 <ProtectedRoute>
                   <RollUp />
+                </ProtectedRoute>
+              } />
+              <Route path="/skaters-street" element={
+                <ProtectedRoute>
+                  <SkatersStreet />
                 </ProtectedRoute>
               } />
               <Route path="/private-rooms" element={

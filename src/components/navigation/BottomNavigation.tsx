@@ -57,12 +57,9 @@ const BottomNavigation = () => {
 
   const navItems = [
     { icon: Home, label: 'Home', path: '/dashboard' },
-    ...pages.slice(0, 3).map(page => ({
-      icon: getIcon(page.name),
-      label: getLabel(page.title),
-      path: `/page/${page.slug}`
-    })),
-    { icon: Video, label: 'Reels', path: '/reels' }
+    { icon: Video, label: 'Reels', path: '/reels' },
+    { icon: Radio, label: 'Roll Up', path: '/roll-up' },
+    { icon: Car, label: 'Skate', path: '/skaters-street' },
   ];
 
   return (
