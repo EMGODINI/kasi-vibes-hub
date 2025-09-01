@@ -74,16 +74,83 @@ const AdminDailyContentManager = () => {
     setForm({ ...emptyForm });
   };
 
+  const validateForm = () => {
+    const errors: string[] = [];
+    
+    if (!form.title.trim()) {
+      errors.push("Title is required");
+    }
+    
+    if (!form.content_type) {
+      errors.push("Content type is required");
+    }
+    
+    if (!form.display_date) {
+      errors.push("Display date is required");
+    }
+    
+    // Validate URLs if provided
+    if (form.image_url && !isValidUrl(form.image_url)) {
+      errors.push("Invalid image URL format");
+    }
+    
+    if (form.video_url && !isValidUrl(form.video_url)) {
+      errors.push("Invalid video URL format");
+    }
+    
+    if (form.external_url && !isValidUrl(form.external_url)) {
+      errors.push("Invalid external URL format");
+    }
+    
+    // Content type specific validations
+    if (form.content_type === 'playlist' && !form.external_url) {
+      errors.push("External URL is required for playlist content");
+    }
+    
+    if (form.content_type === 'video' && !form.video_url) {
+      errors.push("Video URL is required for video content");
+    }
+    
+    if (form.content_type === 'meme' && !form.image_url) {
+      errors.push("Image URL is required for meme content");
+    }
+    
+    return errors;
+  };
+
+  const isValidUrl = (urlString: string): boolean => {
+    try {
+      new URL(urlString);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate form
+    const validationErrors = validateForm();
+    if (validationErrors.length > 0) {
+      toast({
+        title: "Validation Error",
+        description: validationErrors.join(', '),
+        variant: "destructive"
+      });
+      return;
+    }
+    
     try {
       setSaving(true);
       const payload = {
         ...form,
+        title: form.title.trim(),
+        content: form.content?.trim() || null,
         // ensure nulls instead of empty strings where appropriate
-        image_url: form.image_url ? form.image_url : null,
-        video_url: form.video_url ? form.video_url : null,
-        external_url: form.external_url ? form.external_url : null,
+        image_url: form.image_url?.trim() || null,
+        video_url: form.video_url?.trim() || null,
+        external_url: form.external_url?.trim() || null,
       } as any;
 
       if (isEditing && editingId) {
@@ -92,11 +159,11 @@ const AdminDailyContentManager = () => {
           .update(payload)
           .eq("id", editingId);
         if (error) throw error;
-        toast({ title: "Updated", description: "Daily content updated" });
+        toast({ title: "Updated", description: "Daily content updated successfully" });
       } else {
         const { error } = await supabase.from("daily_content").insert(payload);
         if (error) throw error;
-        toast({ title: "Created", description: "Daily content created" });
+        toast({ title: "Created", description: "Daily content created successfully" });
       }
       resetForm();
       fetchItems();

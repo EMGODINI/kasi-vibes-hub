@@ -1,4 +1,5 @@
 
+import { useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Leaf, Sparkles, Music, Users } from 'lucide-react';
@@ -12,6 +13,62 @@ import { useAuth } from '@/hooks/useAuth';
 
 const RollUp = () => {
   const { user } = useAuth();
+
+  useEffect(() => {
+    // SEO Updates
+    document.title = "Roll Up - Chill Community Vibes | 3MGodini";
+    
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Join the Roll Up community for chill vibes, laid-back content, and relaxed social connections. Share your moments and discover amazing playlists.');
+    }
+    
+    const canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (canonicalLink) {
+      canonicalLink.setAttribute('href', window.location.origin + '/roll-up');
+    }
+    
+    // Add JSON-LD structured data
+    const structuredData = {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Roll Up - Chill Community",
+      "description": "Join the Roll Up community for chill vibes, laid-back content, and relaxed social connections.",
+      "url": window.location.origin + '/roll-up',
+      "mainEntity": {
+        "@type": "SocialMediaPosting",
+        "headline": "Roll Up Community",
+        "description": "A relaxed community space for sharing moments and discovering music",
+        "image": window.location.origin + "/assets/roll-up-hero.jpg"
+      },
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "3MGodini",
+        "url": window.location.origin
+      }
+    };
+    
+    // Remove existing structured data script if any
+    const existingScript = document.querySelector('script[type="application/ld+json"][data-page="roll-up"]');
+    if (existingScript) {
+      existingScript.remove();
+    }
+    
+    // Add new structured data
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.setAttribute('data-page', 'roll-up');
+    script.textContent = JSON.stringify(structuredData);
+    document.head.appendChild(script);
+    
+    // Cleanup function
+    return () => {
+      const scriptToRemove = document.querySelector('script[type="application/ld+json"][data-page="roll-up"]');
+      if (scriptToRemove) {
+        scriptToRemove.remove();
+      }
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">

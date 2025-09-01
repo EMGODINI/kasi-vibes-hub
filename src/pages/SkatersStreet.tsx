@@ -14,29 +14,60 @@ const SkatersStreet = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    // SEO essentials
-    document.title = 'Skaters Street | 3MGODINI';
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-      metaDesc.setAttribute(
-        'content',
-        'Skaters Street – roll through community vibes, daily drops, and curated tracks for your session.'
-      );
-    } else {
-      const m = document.createElement('meta');
-      m.name = 'description';
-      m.content = 'Skaters Street – roll through community vibes, daily drops, and curated tracks for your session.';
-      document.head.appendChild(m);
+    // SEO Updates
+    document.title = "Skaters Street - Urban Skateboarding Community | 3MGodini";
+    
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Join Skaters Street - the ultimate urban skateboarding community. Share clips, discover street beats, and connect with skaters worldwide.');
     }
-    const linkCanonical = document.querySelector('link[rel="canonical"]');
-    const href = window.location.origin + '/skaters-street';
-    if (linkCanonical) linkCanonical.setAttribute('href', href);
-    else {
-      const l = document.createElement('link');
-      l.rel = 'canonical';
-      l.href = href;
-      document.head.appendChild(l);
+    
+    const canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (canonicalLink) {
+      canonicalLink.setAttribute('href', window.location.origin + '/skaters-street');
     }
+    
+    // Add JSON-LD structured data
+    const structuredData = {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Skaters Street - Urban Skateboarding Community",
+      "description": "Join Skaters Street - the ultimate urban skateboarding community. Share clips, discover street beats, and connect with skaters worldwide.",
+      "url": window.location.origin + '/skaters-street',
+      "mainEntity": {
+        "@type": "SportsEvent",
+        "name": "Skaters Street Community",
+        "description": "Urban skateboarding community for sharing clips and connecting with skaters",
+        "sport": "Skateboarding",
+        "image": window.location.origin + "/assets/skaters-street-bg.jpg"
+      },
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "3MGodini",
+        "url": window.location.origin
+      }
+    };
+    
+    // Remove existing structured data script if any
+    const existingScript = document.querySelector('script[type="application/ld+json"][data-page="skaters-street"]');
+    if (existingScript) {
+      existingScript.remove();
+    }
+    
+    // Add new structured data
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.setAttribute('data-page', 'skaters-street');
+    script.textContent = JSON.stringify(structuredData);
+    document.head.appendChild(script);
+    
+    // Cleanup function
+    return () => {
+      const scriptToRemove = document.querySelector('script[type="application/ld+json"][data-page="skaters-street"]');
+      if (scriptToRemove) {
+        scriptToRemove.remove();
+      }
+    };
   }, []);
 
   return (
