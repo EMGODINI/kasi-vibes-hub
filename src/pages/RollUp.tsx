@@ -109,7 +109,7 @@ const RollUp = () => {
             </p>
             <div className="flex gap-4 justify-center">
               <Button className="bg-gradient-to-r from-roll-up-neon-green to-roll-up-ultraviolet hover:opacity-80 animate-roll-up-glow">
-                <Leaf className="mr-2 h-4 w-4" />
+                <img src="/lovable-uploads/34e408d9-19c9-4504-bbb7-9796f77f60f6.png" alt="Cannabis" className="mr-2 h-4 w-4" />
                 Light It Up
               </Button>
               <Button variant="outline" className="border-roll-up-ultraviolet text-roll-up-ultraviolet hover:bg-roll-up-ultraviolet/10">
@@ -171,7 +171,7 @@ const RollUp = () => {
           </div>
           
           <div className="glass-tile p-6 text-center animate-roll-up-glow">
-            <Leaf className="h-12 w-12 mx-auto mb-4 text-roll-up-ultraviolet" />
+            <img src="/lovable-uploads/34e408d9-19c9-4504-bbb7-9796f77f60f6.png" alt="Cannabis" className="h-12 w-12 mx-auto mb-4" />
             <h3 className="text-2xl font-bold text-roll-up-neon-green mb-2">15K+</h3>
             <p className="text-roll-up-hazy-magenta">Sessions Shared</p>
           </div>
