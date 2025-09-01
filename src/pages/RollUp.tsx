@@ -94,9 +94,16 @@ const RollUp = () => {
         
         <div className="relative z-10 container mx-auto px-4 h-full flex items-center justify-center">
           <div className="text-center text-white">
-            <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-roll-up-neon-green to-roll-up-ultraviolet bg-clip-text text-transparent animate-cyber-glow">
-              Roll Up 🌿
-            </h1>
+            <div className="flex flex-col items-center mb-8">
+              <img 
+                src="/lovable-uploads/34e408d9-19c9-4504-bbb7-9796f77f60f6.png" 
+                alt="Roll Up Cannabis Leaf Logo" 
+                className="w-32 h-32 mb-4 animate-roll-up-glow"
+              />
+              <h1 className="text-6xl font-bold bg-gradient-to-r from-roll-up-neon-green to-roll-up-ultraviolet bg-clip-text text-transparent animate-cyber-glow">
+                Roll Up
+              </h1>
+            </div>
             <p className="text-xl mb-8 text-roll-up-hazy-magenta">
               Where the vibes meet the clouds - Join the ultimate chill community
             </p>
