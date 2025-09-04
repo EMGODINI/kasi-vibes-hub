@@ -9,40 +9,39 @@ import { Badge } from '@/components/ui/badge';
 import { Radio, Upload, Play, Pause, Heart, MessageSquare } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import AudioPlayer from '@/components/AudioPlayer';
+import { supabase } from '@/integrations/supabase/client';
+import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@/hooks/useAuth';
 
 const Podcast = () => {
-  const [isPlaying, setIsPlaying] = useState<number | null>(null);
-  const [userCredits] = useState(5); // Mock user credits
+  const { user } = useAuth();
+  const [isPlaying, setIsPlaying] = useState<string | null>(null);
+  const [userCredits] = useState(5); // Mock user credits - could be fetched from user profile
   const [showUploadForm, setShowUploadForm] = useState(false);
 
-  const mockPodcasts = [
-    {
-      id: 1,
-      title: 'Kasi Stories Ep. 12',
-      description: 'Real talk about growing up in the township and making it out',
-      host: 'TownshipTalks',
-      duration: '45:32',
-      plays: 2400,
-      likes: 156,
-      comments: 34,
-      audioUrl: '/sample-podcast-1.mp3',
-      isPremium: false,
-      thumbnail: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=400'
-    },
-    {
-      id: 2,
-      title: 'Business in the Hood',
-      description: 'How to start your hustle in the kasi - exclusive premium content',
-      host: 'EntrepreneurSA',
-      duration: '38:15',
-      plays: 1800,
-      likes: 203,
-      comments: 67,
-      audioUrl: '/sample-podcast-2.mp3',
-      isPremium: true,
-      thumbnail: 'https://images.unsplash.com/photo-1590736969955-71cc94901144?w=400'
+  const { data: podcasts = [], isLoading } = useQuery({
+    queryKey: ['podcasts'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('podcasts')
+        .select(`
+          *,
+          profiles:user_id (
+            username,
+            avatar_url
+          )
+        `)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching podcasts:', error);
+        throw error;
+      }
+
+      return data || [];
     }
-  ];
+  });
 
   const handleUpload = (e: React.FormEvent) => {
     e.preventDefault();
@@ -141,67 +140,104 @@ const Podcast = () => {
 
         {/* Podcast List */}
         <div className="space-y-6">
-          {mockPodcasts.map((podcast) => (
-            <Card key={podcast.id} className="bg-gray-900/50 border border-orange-500/20 backdrop-blur-sm hover:shadow-lg hover:shadow-orange-500/10 transition-all duration-300">
-              <CardContent className="p-6">
-                <div className="flex items-start space-x-4">
-                  <img 
-                    src={podcast.thumbnail}
-                    alt={podcast.title}
-                    className="w-20 h-20 rounded-lg object-cover"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <div className="flex items-center space-x-2 mb-1">
-                          <h3 className="text-lg font-semibold text-white">{podcast.title}</h3>
-                          {podcast.isPremium && (
-                            <Badge className="bg-orange-600 text-white text-xs">Premium</Badge>
-                          )}
-                        </div>
-                        <p className="text-gray-400 text-sm">by {podcast.host}</p>
+          {isLoading ? (
+            <div className="space-y-6">
+              {[...Array(3)].map((_, i) => (
+                <Card key={i} className="bg-gray-900/50 border border-orange-500/20 backdrop-blur-sm animate-pulse">
+                  <CardContent className="p-6">
+                    <div className="flex items-start space-x-4">
+                      <div className="w-20 h-20 bg-gray-700 rounded-lg"></div>
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-gray-700 rounded w-3/4"></div>
+                        <div className="h-3 bg-gray-700 rounded w-1/2"></div>
+                        <div className="h-3 bg-gray-700 rounded w-full"></div>
                       </div>
-                      <span className="text-gray-400 text-sm">{podcast.duration}</span>
                     </div>
-                    
-                    <p className="text-gray-300 text-sm mb-3">{podcast.description}</p>
-                    
-                    {podcast.isPremium && userCredits < 1 ? (
-                      <div className="bg-gray-800 rounded-lg p-4 border border-orange-500/30">
-                        <p className="text-orange-400 text-sm mb-2">Premium content - requires credits</p>
-                        <Button size="sm" className="bg-orange-600 hover:bg-orange-700">
-                          Buy Credits
-                        </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            podcasts.map((podcast) => (
+              <Card key={podcast.id} className="bg-gray-900/50 border border-orange-500/20 backdrop-blur-sm hover:shadow-lg hover:shadow-orange-500/10 transition-all duration-300">
+                <CardContent className="p-6">
+                  <div className="flex items-start space-x-4">
+                    <img 
+                      src={podcast.thumbnail_url || 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=400'}
+                      alt={podcast.title}
+                      className="w-20 h-20 rounded-lg object-cover"
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <div className="flex items-center space-x-2 mb-1">
+                            <h3 className="text-lg font-semibold text-white">{podcast.title}</h3>
+                            {podcast.is_premium && (
+                              <Badge className="bg-orange-600 text-white text-xs">Premium</Badge>
+                            )}
+                          </div>
+                          <p className="text-gray-400 text-sm">by {podcast.host_name}</p>
+                        </div>
+                        <span className="text-gray-400 text-sm">
+                          {podcast.duration_seconds ? 
+                            `${Math.floor(podcast.duration_seconds / 60)}:${(podcast.duration_seconds % 60).toString().padStart(2, '0')}` : 
+                            'N/A'
+                          }
+                        </span>
                       </div>
-                    ) : (
-                      <AudioPlayer 
-                        audioUrl={podcast.audioUrl}
-                        title={podcast.title}
-                        isPlaying={isPlaying === podcast.id}
-                        onPlayPause={() => setIsPlaying(isPlaying === podcast.id ? null : podcast.id)}
-                      />
-                    )}
-                    
-                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-700">
-                      <div className="flex items-center space-x-4 text-sm text-gray-400">
-                        <span>{podcast.plays} plays</span>
-                        <span>{podcast.likes} likes</span>
-                        <span>{podcast.comments} comments</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-orange-500">
-                          <Heart className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-orange-500">
-                          <MessageSquare className="w-4 h-4" />
-                        </Button>
+                      
+                      <p className="text-gray-300 text-sm mb-3">{podcast.description}</p>
+                      
+                      {podcast.is_premium && userCredits < 1 ? (
+                        <div className="bg-gray-800 rounded-lg p-4 border border-orange-500/30">
+                          <p className="text-orange-400 text-sm mb-2">Premium content - requires credits</p>
+                          <Button size="sm" className="bg-orange-600 hover:bg-orange-700">
+                            Buy Credits
+                          </Button>
+                        </div>
+                      ) : (
+                        <AudioPlayer 
+                          audioUrl={podcast.audio_url}
+                          title={podcast.title}
+                          isPlaying={isPlaying === podcast.id}
+                          onPlayPause={() => setIsPlaying(isPlaying === podcast.id ? null : podcast.id)}
+                        />
+                      )}
+                      
+                      <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-700">
+                        <div className="flex items-center space-x-4 text-sm text-gray-400">
+                          <span>{podcast.plays_count} plays</span>
+                          <span>{podcast.likes_count} likes</span>
+                          <span>{podcast.comments_count} comments</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-orange-500">
+                            <Heart className="w-4 h-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-orange-500">
+                            <MessageSquare className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            ))
+          )}
+          
+          {!isLoading && podcasts.length === 0 && (
+            <div className="text-center py-12">
+              <Radio className="w-16 h-16 mx-auto mb-4 text-gray-600" />
+              <p className="text-gray-400 mb-4">No podcasts available yet.</p>
+              <Button 
+                onClick={() => setShowUploadForm(true)}
+                className="bg-orange-600 hover:bg-orange-700"
+              >
+                Upload the first podcast
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

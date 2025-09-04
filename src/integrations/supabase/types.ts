@@ -381,6 +381,60 @@ export type Database = {
           },
         ]
       }
+      podcasts: {
+        Row: {
+          audio_url: string
+          comments_count: number | null
+          created_at: string
+          description: string | null
+          duration_seconds: number | null
+          host_name: string
+          id: string
+          is_active: boolean | null
+          is_premium: boolean | null
+          likes_count: number | null
+          plays_count: number | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          audio_url: string
+          comments_count?: number | null
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          host_name: string
+          id?: string
+          is_active?: boolean | null
+          is_premium?: boolean | null
+          likes_count?: number | null
+          plays_count?: number | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          audio_url?: string
+          comments_count?: number | null
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          host_name?: string
+          id?: string
+          is_active?: boolean | null
+          is_premium?: boolean | null
+          likes_count?: number | null
+          plays_count?: number | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       post_comments: {
         Row: {
           content: string
@@ -494,6 +548,57 @@ export type Database = {
           id?: string
           updated_at?: string
           username?: string
+        }
+        Relationships: []
+      }
+      reels: {
+        Row: {
+          comments_count: number | null
+          created_at: string
+          description: string | null
+          duration_seconds: number | null
+          id: string
+          is_active: boolean | null
+          likes_count: number | null
+          shares_count: number | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          user_id: string
+          video_url: string
+          views_count: number | null
+        }
+        Insert: {
+          comments_count?: number | null
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          id?: string
+          is_active?: boolean | null
+          likes_count?: number | null
+          shares_count?: number | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+          video_url: string
+          views_count?: number | null
+        }
+        Update: {
+          comments_count?: number | null
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          id?: string
+          is_active?: boolean | null
+          likes_count?: number | null
+          shares_count?: number | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          video_url?: string
+          views_count?: number | null
         }
         Relationships: []
       }

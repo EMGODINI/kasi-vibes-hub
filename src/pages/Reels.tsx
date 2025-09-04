@@ -7,86 +7,97 @@ import { Heart, MessageCircle, Share, UserPlus, Play, Pause } from 'lucide-react
 import Navigation from '@/components/Navigation';
 import { useAuth } from '@/hooks/useAuth';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import { supabase } from '@/integrations/supabase/client';
+import { useQuery } from '@tanstack/react-query';
 
 interface Reel {
   id: string;
-  user: string;
-  username: string;
-  avatar: string;
+  user_id: string;
+  title: string;
+  description: string;
   video_url: string;
-  thumbnail: string;
-  caption: string;
-  likes: number;
-  comments: number;
-  shares: number;
-  is_following: boolean;
+  thumbnail_url: string;
+  likes_count: number;
+  comments_count: number;
+  shares_count: number;
+  views_count: number;
+  created_at: string;
 }
 
 const ReelsContent = () => {
   const { user } = useAuth();
-  const [reels, setReels] = useState<Reel[]>([]);
   const [currentPlaying, setCurrentPlaying] = useState<string | null>(null);
 
-  // Mock data for now
-  useEffect(() => {
-    const mockReels: Reel[] = [
-      {
-        id: '1',
-        user: 'DanceKingKasi',
-        username: '@dancekingkasi',
-        avatar: '/placeholder.svg',
-        video_url: '/sample-reel1.mp4',
-        thumbnail: 'https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=400',
-        caption: 'New dance challenge! Can you keep up? 💃🕺 #KasiDance #KasiFlixChallenge',
-        likes: 1250,
-        comments: 89,
-        shares: 45,
-        is_following: false
-      },
-      {
-        id: '2',
-        user: 'CarStanceQueen',
-        username: '@carstancequeen',
-        avatar: '/placeholder.svg',
-        video_url: '/sample-reel2.mp4',
-        thumbnail: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=400',
-        caption: 'Movie scene recreation 🎬✨ #KasiFlix #MovieClip',
-        likes: 890,
-        comments: 34,
-        shares: 28,
-        is_following: true
-      },
-      {
-        id: '3',
-        user: 'BeatMakerPro',
-        username: '@beatmakerpro',
-        avatar: '/placeholder.svg',
-        video_url: '/sample-reel3.mp4',
-        thumbnail: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400',
-        caption: 'Amapiano dance challenge 🔥💃 #KasiFlix #AmapianoDance',
-        likes: 2100,
-        comments: 156,
-        shares: 78,
-        is_following: false
-      }
-    ];
-    setReels(mockReels);
-  }, []);
+  const { data: reels = [], isLoading } = useQuery({
+    queryKey: ['reels'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('reels')
+        .select(`
+          *,
+          profiles:user_id (
+            username,
+            avatar_url
+          )
+        `)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .limit(20);
 
-  const handleLike = (reelId: string) => {
-    setReels(prev => prev.map(reel => 
-      reel.id === reelId 
-        ? { ...reel, likes: reel.likes + 1 }
-        : reel
-    ));
+      if (error) {
+        console.error('Error fetching reels:', error);
+        throw error;
+      }
+
+      return data || [];
+    }
+  });
+
+  const handleLike = async (reelId: string) => {
+    if (!user) return;
+    
+    try {
+      // Update likes count in database
+      const { error } = await supabase.rpc('increment_reel_likes', { reel_id: reelId });
+      if (error) throw error;
+      
+      // Optimistically update UI would go here with react-query invalidation
+    } catch (error) {
+      console.error('Error liking reel:', error);
+    }
   };
 
-  const handleFollow = (reelId: string) => {
-    setReels(prev => prev.map(reel => 
-      reel.id === reelId 
-        ? { ...reel, is_following: !reel.is_following }
-        : reel
-    ));
+  const handleFollow = async (userId: string) => {
+    if (!user) return;
+    
+    try {
+      // Check if already following
+      const { data: existingFollow } = await supabase
+        .from('user_follows')
+        .select('id')
+        .eq('follower_id', user.id)
+        .eq('followed_id', userId)
+        .single();
+
+      if (existingFollow) {
+        // Unfollow
+        await supabase
+          .from('user_follows')
+          .delete()
+          .eq('follower_id', user.id)
+          .eq('followed_id', userId);
+      } else {
+        // Follow
+        await supabase
+          .from('user_follows')
+          .insert({
+            follower_id: user.id,
+            followed_id: userId
+          });
+      }
+    } catch (error) {
+      console.error('Error toggling follow:', error);
+    }
   };
 
   const togglePlay = (reelId: string) => {
@@ -103,99 +114,115 @@ const ReelsContent = () => {
           <p className="text-gray-400">Share your dance moves & movie clips - 15 seconds max</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {reels.map((reel) => (
-            <Card key={reel.id} className="bg-gray-900 border-gray-800 overflow-hidden relative group">
-              <div className="relative aspect-[9/16] bg-gray-800">
-                {/* Video placeholder - would be actual video in production */}
-                <img 
-                  src={reel.thumbnail} 
-                  alt="Reel thumbnail"
-                  className="w-full h-full object-cover"
-                />
-                
-                {/* Play/Pause overlay */}
-                <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button
-                    size="lg"
-                    variant="ghost"
-                    className="text-white hover:bg-white/20"
-                    onClick={() => togglePlay(reel.id)}
-                  >
-                    {currentPlaying === reel.id ? (
-                      <Pause className="w-8 h-8" />
-                    ) : (
-                      <Play className="w-8 h-8" />
-                    )}
-                  </Button>
-                </div>
-
-                {/* User info overlay */}
-                <div className="absolute bottom-4 left-4 right-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <Avatar className="w-10 h-10 ring-2 ring-white/20">
-                          <AvatarImage src={reel.avatar} />
-                          <AvatarFallback className="bg-orange-600 text-white">
-                            {reel.user[0]}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="text-white font-semibold text-sm">{reel.user}</p>
-                          <p className="text-gray-300 text-xs">{reel.username}</p>
-                        </div>
-                        <Button
-                          size="sm"
-                          variant={reel.is_following ? "secondary" : "default"}
-                          className={reel.is_following ? "bg-gray-600 hover:bg-gray-700" : "bg-orange-600 hover:bg-orange-700"}
-                          onClick={() => handleFollow(reel.id)}
-                        >
-                          <UserPlus className="w-3 h-3 mr-1" />
-                          {reel.is_following ? 'Following' : 'Follow'}
-                        </Button>
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="aspect-[9/16] bg-gray-800 animate-pulse rounded-lg"></div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {reels.map((reel) => (
+              <Card key={reel.id} className="bg-gray-900 border-gray-800 overflow-hidden relative group">
+                <div className="relative aspect-[9/16] bg-gray-800">
+                  {/* Video thumbnail */}
+                  {reel.thumbnail_url ? (
+                    <img 
+                      src={reel.thumbnail_url} 
+                      alt="Reel thumbnail"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
+                      <div className="text-center text-white">
+                        <h3 className="text-lg font-bold">{reel.title}</h3>
                       </div>
-                      <p className="text-white text-sm mb-3">{reel.caption}</p>
+                    </div>
+                  )}
+                  
+                  {/* Play/Pause overlay */}
+                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button
+                      size="lg"
+                      variant="ghost"
+                      className="text-white hover:bg-white/20"
+                      onClick={() => togglePlay(reel.id)}
+                    >
+                      {currentPlaying === reel.id ? (
+                        <Pause className="w-8 h-8" />
+                      ) : (
+                        <Play className="w-8 h-8" />
+                      )}
+                    </Button>
+                  </div>
+
+                  {/* User info overlay */}
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-3 mb-2">
+                          <Avatar className="w-10 h-10 ring-2 ring-white/20">
+                            <AvatarImage src={reel.profiles?.avatar_url} />
+                            <AvatarFallback className="bg-orange-600 text-white">
+                              {reel.profiles?.username?.[0] || reel.title[0]}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="text-white font-semibold text-sm">{reel.profiles?.username || 'Anonymous'}</p>
+                            <p className="text-gray-300 text-xs">{new Date(reel.created_at).toLocaleDateString()}</p>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="default"
+                            className="bg-orange-600 hover:bg-orange-700"
+                            onClick={() => handleFollow(reel.user_id)}
+                          >
+                            <UserPlus className="w-3 h-3 mr-1" />
+                            Follow
+                          </Button>
+                        </div>
+                        <p className="text-white text-sm mb-3">{reel.description}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Action buttons */}
-                <div className="absolute right-4 bottom-4 flex flex-col space-y-3">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="text-white hover:bg-white/20 flex flex-col items-center p-2"
-                    onClick={() => handleLike(reel.id)}
-                  >
-                    <Heart className="w-6 h-6 mb-1" />
-                    <span className="text-xs">{reel.likes}</span>
-                  </Button>
-                  
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="text-white hover:bg-white/20 flex flex-col items-center p-2"
-                  >
-                    <MessageCircle className="w-6 h-6 mb-1" />
-                    <span className="text-xs">{reel.comments}</span>
-                  </Button>
-                  
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="text-white hover:bg-white/20 flex flex-col items-center p-2"
-                  >
-                    <Share className="w-6 h-6 mb-1" />
-                    <span className="text-xs">{reel.shares}</span>
-                  </Button>
+                  {/* Action buttons */}
+                  <div className="absolute right-4 bottom-4 flex flex-col space-y-3">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-white hover:bg-white/20 flex flex-col items-center p-2"
+                      onClick={() => handleLike(reel.id)}
+                    >
+                      <Heart className="w-6 h-6 mb-1" />
+                      <span className="text-xs">{reel.likes_count}</span>
+                    </Button>
+                    
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-white hover:bg-white/20 flex flex-col items-center p-2"
+                    >
+                      <MessageCircle className="w-6 h-6 mb-1" />
+                      <span className="text-xs">{reel.comments_count}</span>
+                    </Button>
+                    
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-white hover:bg-white/20 flex flex-col items-center p-2"
+                    >
+                      <Share className="w-6 h-6 mb-1" />
+                      <span className="text-xs">{reel.shares_count}</span>
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+              </Card>
+            ))}
+          </div>
+        )}
 
-        {reels.length === 0 && (
+        {!isLoading && reels.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-400 mb-4">No videos available yet.</p>
             <Button className="bg-orange-600 hover:bg-orange-700">

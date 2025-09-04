@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Play, Pause, Volume2, VolumeX, Music } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useQuery } from '@tanstack/react-query';
 
 interface BackgroundMusicPlayerProps {
   onPlayingChange?: (playing: boolean) => void;
@@ -14,21 +16,27 @@ const BackgroundMusicPlayer: React.FC<BackgroundMusicPlayerProps> = ({ onPlaying
   const [currentTrack, setCurrentTrack] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Placeholder lo-fi tracks (you can replace with actual URLs)
-  const lofiTracks = [
-    {
-      title: "Dreamy Clouds",
-      url: "/api/placeholder-audio/1", // Replace with actual URL
-    },
-    {
-      title: "Midnight Stroll", 
-      url: "/api/placeholder-audio/2", // Replace with actual URL
-    },
-    {
-      title: "Purple Haze",
-      url: "/api/placeholder-audio/3", // Replace with actual URL
+  // Fetch real tracks from database
+  const { data: lofiTracks = [] } = useQuery({
+    queryKey: ['background-tracks'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('tracks')
+        .select('*')
+        .eq('is_active', true)
+        .limit(10);
+
+      if (error) {
+        console.error('Error fetching background tracks:', error);
+        return [];
+      }
+
+      return data?.map(track => ({
+        title: track.title,
+        url: track.audio_url || '',
+      })) || [];
     }
-  ];
+  });
 
   useEffect(() => {
     if (audioRef.current) {
