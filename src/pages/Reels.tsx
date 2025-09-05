@@ -22,10 +22,6 @@ interface Reel {
   shares_count: number;
   views_count: number;
   created_at: string;
-  profiles?: {
-    username: string;
-    avatar_url: string;
-  };
 }
 
 const ReelsContent = () => {
@@ -37,20 +33,14 @@ const ReelsContent = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('reels')
-        .select(`
-          *,
-          profiles (
-            username,
-            avatar_url
-          )
-        `)
+        .select('*')
         .eq('is_active', true)
         .order('created_at', { ascending: false })
         .limit(20);
 
       if (error) {
         console.error('Error fetching reels:', error);
-        return []; // Return empty array instead of throwing
+        return [];
       }
 
       return data || [];
@@ -174,13 +164,13 @@ const ReelsContent = () => {
                       <div className="flex-1">
                         <div className="flex items-center space-x-3 mb-2">
                           <Avatar className="w-10 h-10 ring-2 ring-white/20">
-                            <AvatarImage src={reel.profiles?.avatar_url || '/placeholder.svg'} />
+                            <AvatarImage src="/placeholder.svg" />
                             <AvatarFallback className="bg-orange-600 text-white">
-                              {reel.profiles?.username?.[0] || reel.title[0]}
+                              {reel.title[0]}
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <p className="text-white font-semibold text-sm">{reel.profiles?.username || 'Anonymous'}</p>
+                            <p className="text-white font-semibold text-sm">Creator</p>
                             <p className="text-gray-300 text-xs">{new Date(reel.created_at).toLocaleDateString()}</p>
                           </div>
                           <Button
