@@ -22,6 +22,10 @@ interface Reel {
   shares_count: number;
   views_count: number;
   created_at: string;
+  profiles?: {
+    username: string;
+    avatar_url: string;
+  };
 }
 
 const ReelsContent = () => {
@@ -35,7 +39,7 @@ const ReelsContent = () => {
         .from('reels')
         .select(`
           *,
-          profiles:user_id (
+          profiles (
             username,
             avatar_url
           )
@@ -46,7 +50,7 @@ const ReelsContent = () => {
 
       if (error) {
         console.error('Error fetching reels:', error);
-        throw error;
+        return []; // Return empty array instead of throwing
       }
 
       return data || [];
@@ -57,11 +61,19 @@ const ReelsContent = () => {
     if (!user) return;
     
     try {
-      // Update likes count in database
-      const { error } = await supabase.rpc('increment_reel_likes', { reel_id: reelId });
-      if (error) throw error;
-      
-      // Optimistically update UI would go here with react-query invalidation
+      // Get current likes count first, then increment
+      const { data: currentReel } = await supabase
+        .from('reels')
+        .select('likes_count')
+        .eq('id', reelId)
+        .single();
+        
+      if (currentReel) {
+        await supabase
+          .from('reels')
+          .update({ likes_count: currentReel.likes_count + 1 })
+          .eq('id', reelId);
+      }
     } catch (error) {
       console.error('Error liking reel:', error);
     }
@@ -162,7 +174,7 @@ const ReelsContent = () => {
                       <div className="flex-1">
                         <div className="flex items-center space-x-3 mb-2">
                           <Avatar className="w-10 h-10 ring-2 ring-white/20">
-                            <AvatarImage src={reel.profiles?.avatar_url} />
+                            <AvatarImage src={reel.profiles?.avatar_url || '/placeholder.svg'} />
                             <AvatarFallback className="bg-orange-600 text-white">
                               {reel.profiles?.username?.[0] || reel.title[0]}
                             </AvatarFallback>

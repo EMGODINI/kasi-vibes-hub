@@ -861,6 +861,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_reel_likes: {
+        Args: { reel_id: string }
+        Returns: undefined
+      }
       make_admin: {
         Args: { user_email: string }
         Returns: undefined
