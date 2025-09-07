@@ -8,8 +8,8 @@ import BottomNavigation from '@/components/navigation/BottomNavigation';
 const Navigation = () => {
   return (
     <>
-      {/* Floating Urban Navigation */}
-      <nav className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 urban-glass rounded-2xl shadow-neon">
+      {/* Spotify-style Glass Navigation */}
+      <nav className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 spotify-glass">
         <div className="px-6 py-3">
           <div className="flex items-center justify-between space-x-8">
             <NavigationLogo />
