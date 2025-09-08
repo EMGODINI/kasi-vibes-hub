@@ -10,15 +10,11 @@ const NavigationLogo = () => {
         <img 
           src="/lovable-uploads/8fe769f4-bcea-4c20-ab31-dbe6174dc510.png" 
           alt="3MG Logo" 
-          className="w-10 h-8 object-contain filter drop-shadow-lg"
-          style={{
-            filter: 'brightness(0) saturate(100%) invert(77%) sepia(97%) saturate(348%) hue-rotate(6deg) brightness(101%) contrast(102%)'
-          }}
+          className="w-10 h-8 object-contain brightness-0 invert"
         />
       </div>
       <span 
-        className="font-bold text-lg font-orbitron cursor-pointer hover:text-primary transition-colors"
-        style={{ color: '#FDB43A' }}
+        className="font-bold text-lg text-foreground font-orbitron cursor-pointer hover:text-primary transition-colors"
         onClick={() => navigate('/dashboard')}
       >
         3MGODINI
