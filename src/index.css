@@ -106,42 +106,45 @@
   }
 
   .dark {
-    --background: 220 30% 4%;
+    /* Modern dark base - matching reference UI */
+    --background: 0 0% 6%;
     --foreground: 0 0% 98%;
 
-    --card: 220 30% 8%;
+    --card: 0 0% 8%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 220 30% 8%;
+    --popover: 0 0% 8%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 142 76% 36%;
+    /* Purple primary - sophisticated accent */
+    --primary: 271 91% 65%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 220 30% 12%;
+    --secondary: 0 0% 15%;
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 220 30% 15%;
-    --muted-foreground: 220 10% 70%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 63%;
 
-    --accent: 142 76% 36%;
+    /* Orange accent - warm contrast */
+    --accent: 25 95% 53%;
     --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 220 30% 18%;
-    --input: 220 30% 12%;
-    --ring: 142 76% 36%;
+    --border: 0 0% 20%;
+    --input: 0 0% 15%;
+    --ring: 271 91% 65%;
     
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 0 85% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 0 85% 60%;
+    --sidebar-background: 0 0% 6%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 271 91% 65%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 271 91% 65%;
   }
 }
 
@@ -233,57 +236,61 @@
     animation: roll-up-glow 3s ease-in-out infinite;
   }
 
-  /* Spotify-inspired Glass Effects */
+  /* Modern Glass Effects - Matching Reference UI */
   .spotify-glass {
-    backdrop-filter: blur(20px) saturate(180%);
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
+    backdrop-filter: blur(24px) saturate(200%);
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
     box-shadow: 
-      0 8px 32px rgba(0, 0, 0, 0.3),
-      0 0 0 1px rgba(255, 255, 255, 0.05);
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.03);
   }
 
   .spotify-card {
-    backdrop-filter: blur(16px) saturate(150%);
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 8px;
+    backdrop-filter: blur(20px) saturate(180%);
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
     box-shadow: 
-      0 4px 20px rgba(0, 0, 0, 0.4),
-      0 0 0 1px rgba(255, 255, 255, 0.03);
+      0 4px 20px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(255, 255, 255, 0.02);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .spotify-card:hover {
     transform: translateY(-2px);
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.75);
+    border: 1px solid rgba(147, 51, 234, 0.2);
     box-shadow: 
       0 8px 32px rgba(0, 0, 0, 0.5),
-      0 0 0 1px rgba(255, 255, 255, 0.1);
+      0 0 20px rgba(147, 51, 234, 0.1);
   }
 
   .playlist-card {
-    backdrop-filter: blur(12px);
-    background: rgba(40, 40, 40, 0.8);
-    border-radius: 8px;
+    backdrop-filter: blur(16px);
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
     overflow: hidden;
-    transition: transform 0.2s ease;
+    transition: all 0.3s ease;
   }
 
   .playlist-card:hover {
-    transform: scale(1.02);
-    background: rgba(50, 50, 50, 0.9);
+    transform: translateY(-1px);
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(251, 146, 60, 0.2);
+    box-shadow: 0 4px 20px rgba(251, 146, 60, 0.1);
   }
 
   .music-player-glass {
-    backdrop-filter: blur(24px) saturate(200%);
+    backdrop-filter: blur(28px) saturate(220%);
     background: rgba(0, 0, 0, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
+    border-radius: 16px;
     box-shadow: 
-      0 8px 40px rgba(0, 0, 0, 0.6),
-      0 0 0 1px rgba(255, 255, 255, 0.05);
+      0 12px 40px rgba(0, 0, 0, 0.6),
+      0 0 0 1px rgba(255, 255, 255, 0.04);
   }
 
   .glass-tile {

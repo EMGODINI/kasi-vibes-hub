@@ -14,7 +14,7 @@ const NavigationLogo = () => {
         />
       </div>
       <span 
-        className="font-bold text-lg bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent font-orbitron cursor-pointer"
+        className="font-bold text-lg text-primary font-orbitron cursor-pointer"
         onClick={() => navigate('/dashboard')}
       >
         3MGODINI
