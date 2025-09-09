@@ -47,15 +47,14 @@ const Index = () => {
     <div className="dark min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-sm mx-auto">
         {/* Main Player Card */}
-        <div className="spotify-glass p-6 mb-6">
+        <div className="backdrop-blur-xl bg-black/80 border border-white/20 rounded-2xl p-6 mb-6 shadow-2xl">
           {/* Album Art - Golden 3MG Logo */}
-          <div className="aspect-square rounded-lg overflow-hidden mb-6 shadow-2xl bg-gradient-to-br from-black via-gray-900 to-black flex items-center justify-center relative">
-            {/* Cracked glass effect overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent opacity-30"></div>
+          <div className="aspect-square rounded-xl mb-6 shadow-2xl bg-black flex items-center justify-center relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/10 via-transparent to-yellow-500/5"></div>
             <div className="relative z-10">
-              <h1 className="text-6xl font-black text-yellow-500 font-orbitron drop-shadow-2xl">
+              <div className="text-8xl font-black text-yellow-500 tracking-wider" style={{fontFamily: 'Orbitron, monospace'}}>
                 3MG
-              </h1>
+              </div>
             </div>
           </div>
 
