@@ -11,7 +11,7 @@ const NavigationLogo = () => {
           src="/lovable-uploads/8fe769f4-bcea-4c20-ab31-dbe6174dc510.png" 
           alt="3MG Logo" 
           className="w-10 h-8 object-contain"
-          style={{ filter: 'brightness(0) invert(1)' }}
+          style={{ filter: 'brightness(0) saturate(100%) invert(74%) sepia(100%) saturate(500%) hue-rotate(15deg) brightness(120%)' }}
         />
       </div>
       <span 
