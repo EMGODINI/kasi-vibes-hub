@@ -48,13 +48,15 @@ const Index = () => {
       <div className="w-full max-w-sm mx-auto">
         {/* Main Player Card */}
         <div className="spotify-glass p-6 mb-6">
-          {/* Album Art */}
-          <div className="aspect-square rounded-lg overflow-hidden mb-6 shadow-2xl">
-            <img 
-              src="/lovable-uploads/8fe769f4-bcea-4c20-ab31-dbe6174dc510.png"
-              alt="3MGODINI"
-              className="w-full h-full object-cover"
-            />
+          {/* Album Art - Golden 3MG Logo */}
+          <div className="aspect-square rounded-lg overflow-hidden mb-6 shadow-2xl bg-gradient-to-br from-black via-gray-900 to-black flex items-center justify-center relative">
+            {/* Cracked glass effect overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent opacity-30"></div>
+            <div className="relative z-10">
+              <h1 className="text-6xl font-black text-yellow-500 font-orbitron drop-shadow-2xl">
+                3MG
+              </h1>
+            </div>
           </div>
 
           {/* Track Info */}
@@ -77,7 +79,7 @@ const Index = () => {
               onValueChange={([value]) => setCurrentTime(value)}
               max={duration}
               step={1}
-              className="mb-3"
+              className="mb-3 [&>span[role=slider]]:bg-green-500 [&>span[data-orientation=horizontal]]:bg-green-500"
             />
             <div className="flex justify-between text-xs text-muted-foreground font-mono">
               <span>{formatTime(currentTime)}</span>
@@ -97,7 +99,7 @@ const Index = () => {
             
             <Button
               onClick={togglePlay}
-              className="w-12 h-12 rounded-full bg-primary text-black hover:bg-primary/90 hover:scale-105 flex items-center justify-center transition-all duration-200"
+              className="w-12 h-12 rounded-full bg-green-500 text-black hover:bg-green-400 hover:scale-105 flex items-center justify-center transition-all duration-200"
             >
               {isPlaying ? (
                 <Pause className="h-5 w-5" />
@@ -123,7 +125,7 @@ const Index = () => {
               onValueChange={setVolume}
               max={100}
               step={1}
-              className="flex-1"
+              className="flex-1 [&>span[role=slider]]:bg-green-500 [&>span[data-orientation=horizontal]]:bg-green-500"
             />
           </div>
         </div>
@@ -133,7 +135,7 @@ const Index = () => {
           <div className="spotify-card p-4">
             <Button 
               onClick={() => navigate('/auth')} 
-              className="w-full bg-primary text-black hover:bg-primary/90 font-semibold py-3 text-base rounded-full border-0"
+              className="w-full bg-green-500 text-black hover:bg-green-400 font-semibold py-3 text-base rounded-full border-0"
             >
               Join the Community
             </Button>
@@ -153,7 +155,7 @@ const Index = () => {
         {/* Bottom Info */}
         <div className="text-center mt-6">
           <p className="text-xs text-muted-foreground font-medium">
-            Powered by <span className="text-primary">3MGODINI</span>
+            Powered by <span className="text-green-500">3MGODINI</span>
           </p>
         </div>
       </div>
