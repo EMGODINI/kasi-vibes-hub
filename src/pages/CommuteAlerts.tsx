@@ -163,12 +163,12 @@ const CommuteAlerts = () => {
               <h3 className="text-white font-semibold text-lg mb-4">
                 💡 Pro Tips
               </h3>
-              <div className="space-y-3 text-sm text-gray-300">
-                <p>• Report incidents as soon as you see them</p>
-                <p>• Provide accurate location details</p>
-                <p>• Update alerts if conditions change</p>
-                <p>• Use the map to visualize affected areas</p>
-                <p>• Check alerts before you leave home</p>
+              <ul className="space-y-3 text-sm text-gray-300">
+                <li>Report incidents as soon as you see them</li>
+                <li>Provide accurate location details</li>
+                <li>Update alerts if conditions change</li>
+                <li>Use the map to visualize affected areas</li>
+                <li>Check alerts before you leave home</li>
               </ul>
             </div>
 
@@ -216,4 +216,3 @@ const CommuteAlerts = () => {
 };
 
 export default CommuteAlerts;
-
