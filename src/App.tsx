@@ -23,6 +23,8 @@ import RollUp from "./pages/RollUp";
 import SkatersStreet from "./pages/SkatersStreet";
 import Groovist from "./pages/Groovist";
 import CommuteAlerts from "./pages/CommuteAlerts";
+import DirectMessages from "./pages/DirectMessages";
+import AsiVaye from "./pages/AsiVaye";
 import Premium from "./pages/Premium";
 import DynamicPage from "./pages/DynamicPage";
 import NotFound from "./pages/NotFound";
@@ -82,6 +84,11 @@ const App = () => (
               <Route path="/commute-alerts" element={
                 <ProtectedRoute>
                   <CommuteAlerts />
+                </ProtectedRoute>
+              } />
+              <Route path="/asi-vaye" element={
+                <ProtectedRoute>
+                  <AsiVaye />
                 </ProtectedRoute>
               } />
               <Route path="/direct-messages" element={
